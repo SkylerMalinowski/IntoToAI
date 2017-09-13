@@ -1,2 +1,2 @@
-# IntoToAI
+# IntroToAI
 RU CS 440
