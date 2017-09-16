@@ -15,9 +15,16 @@ import matplotlib.pyplot as plt
 import math
 # Random for random numbers
 import random
+# AnyTree to make and display Trees
+from anytree import Node, RenderTree, AsciiStyle
+from anytree.dotexport import RenderTreeGraph
+# RE for string parsing
+import re
+
+import collections
+
 
 # Task 1  **********************************************************************
-
 def checkArgv(argv):
 	for validArgv in ['5','7','9','11']:
 		if argv[1] == validArgv:
@@ -31,8 +38,8 @@ def makeMatrix(size):
 	n = int(size)
 	
 	# makes n by n matrix
-	matrix = np.zeros( shape=(n,n) )
-	visitMat = np.zeros( shape=(n,n) )
+	matrix = np.zeros( shape=(n,n),dtype=np.int )
+	visitMat = np.zeros( shape=(n,n),dtype=np.int )
 	
 	# populates n by n matrix
 	for row in range(n):
@@ -44,35 +51,15 @@ def makeMatrix(size):
 				matrix[row,col] = random.randint(1,Max)
 	
 	# debug
+	#matrix = np.matrix([ [2,2,2,4,3], [2,2,3,3,3], [3,3,2,3,3], [4,3,2,2,2], [1,2,1,4,0] ])
+	#matrix = np.matrix([ [3,3,2,4,3], [2,2,2,1,1], [4,3,1,3,4], [2,3,1,1,3], [1,1,3,2,0] ])
+	print('Matrix:')
 	print(matrix)
 	
 	return matrix, visitMat
 
 
 # Task 2  **********************************************************************
-
-# Tree
-class Node(object):
-	def __init__(self,row,col,data):
-		self.name = "(" + str(row) + "," + str(col) + ")"
-		self.row = row
-		self.col = col
-		self.data = data
-		self.items = []
-	
-	def __repr__(self):
-		return self.name
-	
-	def add_child(self,obj):
-		self.items.append(obj)
-	
-	def get_name(self):
-		return self.name
-	
-	def get_children(self):
-		return self.items
-
-
 class Queue():
 	def __init__(self):
 		self.items = []
@@ -90,34 +77,36 @@ class Queue():
 		return len(self.items)
 
 
-def printTree(root,lv=0):
-	print( lv * '  ', root.get_name() )
-	
-	children = root.get_children()
-	lv += 1
-	
-	for child in children:
-		printTree(child,lv)
+def encodeName(row,col):
+	name = '(' + str(row) + ',' + str(col) + ')'
+	return name
 
 
-def validMoves(matrix,visitMat,curr):
+def decodeName(node):
+	name = node.name
+	digits = re.findall('\d+',name)
+	return int(digits[0]),int(digits[1])
+
+
+def validMoves(matrix,visitMat,row,col):
 	valid_list = []
+	jump = int(matrix[row,col])
 	
-	test = int(curr[1] + curr[2])
-	if test < len(matrix) and visitMat[curr[0],test] == 0:  # Right
-		valid_list.append([ curr[0],test,matrix[curr[0],test] ])
+	test = int(col + jump)
+	if test < len(matrix) and visitMat[row,test] == 0:  # Right
+		valid_list.append( [row,test] )
 	
-	test = int(curr[0] + curr[2])
-	if test < len(matrix) and visitMat[test,curr[1]] == 0:  # Down
-		valid_list.append([ test,curr[1],matrix[test,curr[1]] ])
+	test = row + jump
+	if test < len(matrix) and visitMat[test,col] == 0:  # Down
+		valid_list.append( [test,col] )
 	
-	test = int(curr[1] - curr[2])
-	if test >= 0 and visitMat[test,curr[0]] == 0:  # Left
-		valid_list.append([ curr[0],test,matrix[curr[0],test] ])
+	test = col - jump
+	if test >= 0 and visitMat[row,test] == 0:  # Left
+		valid_list.append( [row,test] )
 	
-	test = int(curr[0] - curr[2])
-	if test >= 0 and visitMat[test,curr[1]] == 0:  # Up
-		valid_list.append([ test,curr[1],matrix[test,curr[1]] ])
+	test = row - jump
+	if test >= 0 and visitMat[test,col] == 0:  # Up
+		valid_list.append( [test,col] )
 	
 	# debug
 	#print(valid_list)
@@ -125,40 +114,47 @@ def validMoves(matrix,visitMat,curr):
 	return valid_list
 
 
-def buildTree(matrix,visitMat,size,row,col):
+# BFS algorithm
+def evaluate(matrix,visitMat,size,row,col):
 	n = int(size)
+	evalMat = np.zeros( shape=(n,n),dtype=np.int )
+	evalMat.fill(-1)
 	Q = Queue()
 	
-	root = Node(row,col,matrix[row,col])  # root tree node
-	Q.enqueue([row,col,matrix[row,col]])  # row,col,jump
-	visitMat[row,col] = 1
+	root = Node(encodeName(row,col))  # root tree node
+	Q.enqueue(root)
 	
-	curr_data = None  # current node data
-	curr_node = root
 	while( Q.isEmpty() == False ):
-		prev_data = curr_data  # previous node data
-		prev_node = curr_node
-		curr_data = Q.dequeue()
+		node = Q.dequeue()
 		
-		# check valid for children (move,visit)
-		valid_moves = validMoves(matrix,visitMat,curr_data)
+		row,col = decodeName(node)
+		visitMat[row,col] = 1
+		evalMat[row,col] = node.depth
+		valid_moves = validMoves(matrix,visitMat,row,col)
 		
-		# tree,queue,visit
 		for child in valid_moves:
-			curr_node = Node(child[0],child[1],child[2])
-			prev_node.add_child(curr_node)
-			Q.enqueue(child)
+			new_node = Node(encodeName(child[0],child[1]),parent=node)
+			Q.enqueue( new_node )
 			visitMat[child[0],child[1]] = 1
+			evalMat[child[0],child[1]] = new_node.depth
 	
-	# debug
-	#printTree(root)
+	k = 0
+	if evalMat[n-1,n-1] is not -1:
+		k = evalMat[n-1,n-1]
+	else:
+		k = - (evalMat == -1).sum()
+	
+	
+	#debug
+	#print('visitMat:')
 	#print(visitMat)
+	print('evalMat:')
+	print(evalMat)
+	#print(RenderTree(tree, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(root).to_picture("tree.png")
+	print('Value Function =',k)
 	
-	return root
-
-
-def evalMatrix(matrix,visitMat):
-	pass # code
+	return root,evalMat,k
 
 
 # Main  ************************************************************************
@@ -167,12 +163,15 @@ def main(argv):
 	matrix,visitMat = makeMatrix(argv[1])
 	
 	# Task 2
-	tree = buildTree(matrix,visitMat,argv[1],0,0)
-	evalMatrix(matrix,visitMat)
+	tree,evalMat,k = evaluate(matrix,visitMat,argv[1],0,0)
+	
+	# Task 3
+	pass # code
 
 
 # run main module if not imported
 if __name__ == "__main__":
+	
 	if checkArgv(sys.argv) == False:
 		print("arguement error: not in domain [5,7,9,11]")
 	
