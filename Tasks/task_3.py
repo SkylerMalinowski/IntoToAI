@@ -113,7 +113,6 @@ def validMoves(matrix,visitMat,row,col):
 
 # BFS algorithm
 def evaluate(matrix,fileName='tree',row=0,col=0):
-	fileName = fileName + '.png'
 	n = len(matrix)
 	
 	visitMat = np.zeros( shape=(n,n),dtype=np.int )
@@ -149,11 +148,12 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	#print(visitMat)
 	#print('evalMat:')
 	#print(evalMat)
+	#fileName = fileName + '.png'
 	#print(RenderTree(tree, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName)
+	#RenderTreeGraph(root).to_picture(fileName)
 	#print('Value Function =',k)
 	
-	return k
+	return k,root
 
 
 # Task 3  **********************************************************************
@@ -171,8 +171,8 @@ def perturbate(mat,fileName='tree'):
 	Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
 	new_mat[row,col] = random.randint(1,Max)
 	
-	k1 = evaluate(new_mat,fileName)
-	k2 = evaluate(mat,fileName)
+	k1,root1 = evaluate(new_mat,fileName)
+	k2,root2 = evaluate(mat,fileName)
 	
 	# debug
 	#print('Matrix 1:')
@@ -182,14 +182,18 @@ def perturbate(mat,fileName='tree'):
 	#print(new_mat)
 	#print('Value Function 2 =',k2)
 	
+	fileName = fileName + '.png'
 	if k1 > k2:
+		RenderTreeGraph(root1).to_picture(fileName)
 		return new_mat,k1
 	else:
+		RenderTreeGraph(root2).to_picture(fileName)
 		return mat,k2
 
 
-def collectData(size):
+def collectData(size,fileName='tree'):
 	n = int(size)
+	
 	t = [0,0]
 	total_t = 0
 	k = 0
@@ -201,7 +205,7 @@ def collectData(size):
 		matrix = makeMatrix(arg)
 		t[0] = time.time()
 		for i in range(int(n)):
-			matrix,k = perturbate(matrix)
+			matrix,k = perturbate(matrix,fileName+'_'+str(arg))
 			y[i] = k
 		t[1] = time.time()
 		total_t += t[1]-t[0]
@@ -210,7 +214,7 @@ def collectData(size):
 		print('Final',arg,'by',arg,"Matrix:")
 		print(matrix)
 		print("Evaluation Function =",k)
-		print("Elapsed Time =",t[1]-t[0],"sec")
+		print("Elapsed Computational Time =",t[1]-t[0],"sec")
 		
 		# debug
 		plt.plot(x,y)
@@ -219,20 +223,13 @@ def collectData(size):
 	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	print("\n","Total Elapsed Time =",total_t,"sec")
+	print("\n","Total Elapsed Computational Time =",total_t,"sec")
 	plt.show()
 
 
 # Main  ************************************************************************
 def main(argv):
-	# Task 1
-	#matrix = makeMatrix(argv[1])
-	
-	# Task 2
-	#k = evaluate(matrix)
-	
-	# Task 3
-	collectData(argv[1])
+	collectData(argv[1],'task_3')
 
 
 # run main module if not imported

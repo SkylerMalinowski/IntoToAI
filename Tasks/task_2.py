@@ -6,9 +6,6 @@
 # **************************************************************************** #
 
 
-# task_1.py modules
-import task_1
-
 # Sys and Opt for CLI arguments and flags
 import sys, getopt
 # NumPy for math functions and data structures
@@ -22,7 +19,41 @@ from anytree.dotexport import RenderTreeGraph
 import re
 
 
-# ******************************************************************************
+# Task 1  **********************************************************************
+def checkArgv(argv):
+	for validArgv in ['5','7','9','11']:
+		if argv[1] == validArgv:
+			return True
+	
+	return False
+
+
+def makeMatrix(size):
+	
+	n = int(size)
+	
+	# makes n by n matrix
+	matrix = np.zeros( shape=(n,n),dtype=np.int )
+	
+	# populates n by n matrix
+	for row in range(n):
+		for col in range(n):
+			Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
+			if Max == 0:
+				matrix[row,col] = 0
+			else:
+				matrix[row,col] = random.randint(1,Max)
+	
+	# debug
+	#matrix = np.matrix([ [2,2,2,4,3], [2,2,3,3,3], [3,3,2,3,3], [4,3,2,2,2], [1,2,1,4,0] ])
+	#matrix = np.matrix([ [3,3,2,4,3], [2,2,2,1,1], [4,3,1,3,4], [2,3,1,1,3], [1,1,3,2,0] ])
+	print('matrix:')
+	print(matrix)
+	
+	return matrix
+
+
+# Task 2  **********************************************************************
 class Queue():
 	def __init__(self):
 		self.items = []
@@ -124,13 +155,13 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 
 # Main  ************************************************************************
 def main(argv):
-	matrix = task_1.makeMatrix(argv[1])
+	matrix = makeMatrix(argv[1])
 	k = evaluate(matrix,'task_2')
 
 
 # run main module if not imported
 if __name__ == "__main__":
-	if task_1.checkArgv(sys.argv) == False:
+	if checkArgv(sys.argv) == False:
 		print("arguement error: not in domain [5,7,9,11]")
 	else:
 		main(sys.argv)
