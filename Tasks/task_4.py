@@ -15,7 +15,7 @@ import random
 # AnyTree to make and display Trees
 from anytree import Node, RenderTree, AsciiStyle
 from anytree.dotexport import RenderTreeGraph
-# RE for string parsing
+# Regular Expression for string parsing
 import re
 # MatPlotLib for graphibg
 import matplotlib.pyplot as plt
@@ -148,10 +148,11 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	#print(visitMat)
 	#print('evalMat:')
 	#print(evalMat)
-	#fileName = fileName + '.png'
-	#print(RenderTree(tree, style=AsciiStyle()).by_attr())
-	#RenderTreeGraph(root).to_picture(fileName)
+	#fileName += '.png'
 	#print('Value Function =',k)
+	
+	#print(RenderTree(root, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(root).to_picture(fileName)
 	
 	return k,root
 

@@ -141,14 +141,15 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	else:
 		k = evalMat[n-1,n-1]
 	
-	#debug
+	# debug
 	#print('visitMat:')
 	#print(visitMat)
 	print('evalMat:')
 	print(evalMat)
-	#print(RenderTree(tree, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName)
 	print('Value Function =',k)
+	
+	#print(RenderTree(root, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(root).to_picture(fileName)
 	
 	return k
 

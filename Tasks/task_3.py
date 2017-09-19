@@ -149,9 +149,10 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	#print('evalMat:')
 	#print(evalMat)
 	#fileName = fileName + '.png'
-	#print(RenderTree(tree, style=AsciiStyle()).by_attr())
-	#RenderTreeGraph(root).to_picture(fileName)
 	#print('Value Function =',k)
+	
+	#print(RenderTree(root, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(root).to_picture(fileName)
 	
 	return k,root
 
