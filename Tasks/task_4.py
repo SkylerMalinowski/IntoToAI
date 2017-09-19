@@ -157,22 +157,22 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 
 
 # Task 3  **********************************************************************
-def perturbate(mat,fileName='tree'):
-	n = len(mat)
-	new_mat = np.copy(mat)
+def hillClimb(matrix,fileName='tree',row=0,col=0):
+	n = len(matrix)
+	new_matrix = np.copy(matrix)
 	
-	row = random.randint(0,n-1)
-	col = random.randint(0,n-1)
+	rand_row = random.randint(0,n-1)
+	rand_col = random.randint(0,n-1)
 	
-	while(row is not 0 and col is not 0 or row is not n-1 and col is not n-1):
-		row = random.randint(0,n-1)
-		col = random.randint(0,n-1)
+	while(rand_row is not 0 and rand_col is not 0 or rand_row is not n-1 and rand_col is not n-1):
+		rand_row = random.randint(0,n-1)
+		rand_col = random.randint(0,n-1)
 	
-	Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
-	new_mat[row,col] = random.randint(1,Max)
+	Max = max(n-1-rand_row,rand_row-n-1,n-1-rand_col,rand_col-n-1)
+	new_matrix[rand_row,rand_col] = random.randint(1,Max)
 	
-	k1,root1 = evaluate(new_mat,fileName)
-	k2,root2 = evaluate(mat,fileName)
+	k1,root1 = evaluate(new_matrix,fileName,row,col)
+	k2,root2 = evaluate(matrix,fileName,row,col)
 	
 	# debug
 	#print('Matrix 1:')
@@ -184,52 +184,100 @@ def perturbate(mat,fileName='tree'):
 	
 	fileName += '.png'
 	if k1 > k2:
-		RenderTreeGraph(root1).to_picture(fileName)
-		return new_mat,k1
+		#RenderTreeGraph(root1).to_picture(fileName)
+		return new_matrix,k1,root1
 	else:
-		RenderTreeGraph(root2).to_picture(fileName)
-		return mat,k2
+		#RenderTreeGraph(root2).to_picture(fileName)
+		return matrix,k2,root2
 
 
-def collectData(size,fileName='tree'):
-	n = int(size)
+# Task 4  **********************************************************************
+def collectData(matrix,argv1,argv2,fileName='tree'):
+	n = len(matrix)
+	restarts = int(argv1)
+	iterations = int(argv2)
 	
-	t = [0,0]
-	total_t = 0
-	k = 0
+	t = [0,0,0]
 	
-	x = np.arange(n)
-	y = np.zeros(n,dtype=np.int)
+	k1 = 0
+	k2 = 0
+	matrix1 = np.copy(matrix)
+	matrix2 = np.copy(matrix1)
 	
-	for arg in [5,7,9,11]:
-		matrix = makeMatrix(arg)
-		t[0] = time.time()
-		for i in range(int(n)):
-			matrix,k = perturbate(matrix,fileName+'_'+str(arg))
-			y[i] = k
-		t[1] = time.time()
-		total_t += t[1]-t[0]
-		
-		# debug
-		print('Final',arg,'by',arg,"Matrix:")
-		print(matrix)
-		print("Evaluation Function =",k)
-		print("Elapsed Computational Time =",t[1]-t[0],"sec")
-		
-		# debug
-		plt.plot(x,y)
+	best_k1 = 0
+	best_k2 = 0
+	best_root1 = Node('None')
+	best_root2 = Node('None')
+	best_matrix1 = np.copy(matrix1)
+	best_matrix2 = np.copy(matrix2)
+	
+	x = np.arange(iterations)
+	y1 = np.zeros(iterations)
+	y2 = np.zeros(shape=(iterations))
+	
+	t[0] = time.time()
+	for i in range(iterations):
+		matrix1,k1,root1 = hillClimb(matrix1,fileName+'_'+str(n))
+		y1[i] = k1
+		if i == 0:
+			best_k1 = k1
+			best_root1 = root1
+			best_matrix1 = matrix1
+		elif y1[i] >best_k1:
+			best_k1 = k1
+			best_root1 = root1
+			best_matrix1 = matrix1
+	plt.plot(x,y1,'r-')
+	t[1] = time.time()
+	for re in range(restarts):
+		row = random.randint(0,n-1)
+		col = random.randint(0,n-1)
+		for i in range(iterations):
+			matrix2,k2,root2 = hillClimb(matrix2,fileName+'_'+str(n)+'_RR',row,col)
+			y2[i] = k2
+			if re == 0:
+				best_k2 = k2
+				best_root2 = root2
+				best_matrix2 = matrix2
+			elif y2[i] > best_k2 and re != 0:
+				best_k2 = k2
+				best_root2 = root2
+				best_matrix2 = matrix2
+		plt.plot(x,y2,'b--')
+	t[2] = time.time()
+	
+	RenderTreeGraph(best_root1).to_picture(fileName+'_'+str(n)+'.png')
+	RenderTreeGraph(best_root2).to_picture(fileName+'_'+str(n)+'_RR.png')
 	
 	# debug
-	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])
+	print('Hill Climb - Final',str(n),'by',str(n),"Matrix:")
+	print(best_matrix1)
+	print("Evaluation Function =",best_k1)
+	print("Elapsed Computational Time =",t[1]-t[0],"sec")
+	print('')
+	
+	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
+	print(best_matrix2)
+	print("Evaluation Function =",best_k2)
+	print("Elapsed Computational Time =",t[2]-t[1],"sec")
+	print('')
+	
+	# debug
+	plt.title(str(n)+' by '+str(n))
+	plt.legend(['Hill Climb','Hill Climb with Random Restarts'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	print("\n","Total Elapsed Computational Time =",total_t,"sec")
 	plt.show()
 
 
 # Main  ************************************************************************
 def main(argv):
-	collectData(argv[1],'task_3')
+	# argv[1] == number of random restarts
+	# argv[2] == number of iterations per restart
+	
+	for arg in [5,7,9,11]:
+		matrix = makeMatrix(arg)
+		collectData(matrix,argv[1],argv[2],'task_4')
 
 
 # run main module if not imported

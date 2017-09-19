@@ -136,10 +136,10 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 			evalMat[child[0],child[1]] = new_node.depth
 	
 	k = 0
-	if evalMat[n-1,n-1] is not -1:
-		k = evalMat[n-1,n-1]
-	else:
+	if evalMat[n-1,n-1] == -1:
 		k = - (evalMat == -1).sum()
+	else:
+		k = evalMat[n-1,n-1]
 	
 	#debug
 	#print('visitMat:')
