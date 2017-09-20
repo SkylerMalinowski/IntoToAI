@@ -148,11 +148,11 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	#print(visitMat)
 	#print('evalMat:')
 	#print(evalMat)
-	#fileName = fileName + '.png'
 	#print('Value Function =',k)
 	
+	#fileName = fileName + '.png'
 	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName)
+	#RenderTreeGraph(root).to_picture(fileName)
 	
 	return k,root
 
@@ -211,14 +211,13 @@ def collectData(size,fileName='tree'):
 		t[1] = time.time()
 		total_t += t[1]-t[0]
 		
+		plt.plot(x,y)
+		
 		# debug
 		print('Final',arg,'by',arg,"Matrix:")
 		print(matrix)
 		print("Evaluation Function =",k)
 		print("Elapsed Computational Time =",t[1]-t[0],"sec")
-		
-		# debug
-		plt.plot(x,y)
 	
 	# debug
 	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])

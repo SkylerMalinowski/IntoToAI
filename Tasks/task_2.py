@@ -24,8 +24,26 @@ def checkArgv(argv):
 	for validArgv in ['5','7','9','11']:
 		if argv[1] == validArgv:
 			return True
-	
+	if '.txt' in argv[1]:
+		return True
 	return False
+
+def fileParse(fileName):
+	file = open(fileName,'r')
+	matrix = []
+	
+	for line in file:
+		data = [int(i) for i in line.split()]
+		matrix.append(data)
+	file.close()
+	
+	npMatrix = np.array(matrix)
+	
+	#debug
+	print('matrix:')
+	print(npMatrix)
+	
+	return npMatrix
 
 
 def makeMatrix(size):
@@ -156,13 +174,16 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 
 # Main  ************************************************************************
 def main(argv):
-	matrix = makeMatrix(argv[1])
+	if '.txt' in argv[1]:
+		matrix = fileParse(argv[1])
+	else:
+		matrix = makeMatrix(argv[1])
 	k = evaluate(matrix,'task_2')
 
 
 # run main module if not imported
 if __name__ == "__main__":
 	if checkArgv(sys.argv) == False:
-		print("arguement error: not in domain [5,7,9,11]")
+		print("arguement error: not in domain [5,7,9,11] or a file")
 	else:
 		main(sys.argv)

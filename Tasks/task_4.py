@@ -148,11 +148,11 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	#print(visitMat)
 	#print('evalMat:')
 	#print(evalMat)
-	#fileName += '.png'
 	#print('Value Function =',k)
 	
+	#fileName += '.png'
 	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName)
+	#RenderTreeGraph(root).to_picture(fileName)
 	
 	return k,root
 
@@ -183,7 +183,7 @@ def hillClimb(matrix,fileName='tree',row=0,col=0):
 	#print(new_mat)
 	#print('Value Function 2 =',k2)
 	
-	fileName += '.png'
+	#fileName += '.png'
 	if k1 > k2:
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
