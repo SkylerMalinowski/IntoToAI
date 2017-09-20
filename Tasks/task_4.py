@@ -24,14 +24,6 @@ import time
 
 
 # Task 1  **********************************************************************
-def checkArgv(argv):
-	for validArgv in ['5','7','9','11']:
-		if argv[1] == validArgv:
-			return True
-	
-	return False
-
-
 def makeMatrix(size):
 	n = int(size)
 	
@@ -195,6 +187,7 @@ def hillClimb(matrix,fileName='tree',row=0,col=0):
 # Task 4  **********************************************************************
 def collectData(matrix,argv1,argv2,fileName='tree'):
 	n = len(matrix)
+	N = int(argv1) * int(argv2)
 	restarts = int(argv1)
 	iterations = int(argv2)
 	
@@ -212,39 +205,41 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 	best_matrix1 = np.copy(matrix1)
 	best_matrix2 = np.copy(matrix2)
 	
-	x = np.arange(iterations)
-	y1 = np.zeros(iterations)
-	y2 = np.zeros(shape=(iterations))
+	x = np.arange(N)
+	y1 = np.zeros(N)
+	y2 = []
 	
 	t[0] = time.time()
-	for i in range(iterations):
+	for i in range(N):
 		matrix1,k1,root1 = hillClimb(matrix1,fileName+'_'+str(n))
 		y1[i] = k1
 		if i == 0:
 			best_k1 = k1
 			best_root1 = root1
 			best_matrix1 = matrix1
-		elif y1[i] >best_k1:
+		elif y1[i] > best_k1:
 			best_k1 = k1
 			best_root1 = root1
 			best_matrix1 = matrix1
 	plt.plot(x,y1,'r-')
+	
 	t[1] = time.time()
+	
 	for re in range(restarts):
 		row = random.randint(0,n-1)
 		col = random.randint(0,n-1)
 		for i in range(iterations):
 			matrix2,k2,root2 = hillClimb(matrix2,fileName+'_'+str(n)+'_RR',row,col)
-			y2[i] = k2
 			if re == 0:
 				best_k2 = k2
 				best_root2 = root2
 				best_matrix2 = matrix2
-			elif y2[i] > best_k2 and re != 0:
+			elif k2 > best_k2:
 				best_k2 = k2
 				best_root2 = root2
 				best_matrix2 = matrix2
-		plt.plot(x,y2,'b--')
+			y2.append(best_k2)
+	plt.plot(x,y2,'b--')
 	t[2] = time.time()
 	
 	RenderTreeGraph(best_root1).to_picture(fileName+'_'+str(n)+'.png')
@@ -273,9 +268,6 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 
 # Main  ************************************************************************
 def main(argv):
-	# argv[1] == number of random restarts
-	# argv[2] == number of iterations per restart
-	
 	for arg in [5,7,9,11]:
 		matrix = makeMatrix(arg)
 		collectData(matrix,argv[1],argv[2],'task_4')
