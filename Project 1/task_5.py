@@ -333,7 +333,8 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 		#RenderTreeGraph(root1).to_picture(fileName)
 		print("better step\n")
 		return new_matrix,k1,root1
-	elif random.random() >= (float(p)/100):
+	elif random.random() <= (p):
+		print p
 		#RenderTreeGraph(root2).to_picture(fileName)
 		print("taking chance going down\n")
 		return new_matrix,k1,root1
