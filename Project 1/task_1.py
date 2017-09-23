@@ -40,8 +40,6 @@ def makeMatrix(size):
 				matrix[row,col] = random.randint(1,Max)
 	
 	# debug
-	#matrix = np.matrix([ [2,2,2,4,3], [2,2,3,3,3], [3,3,2,3,3], [4,3,2,2,2], [1,2,1,4,0] ])
-	#matrix = np.matrix([ [3,3,2,4,3], [2,2,2,1,1], [4,3,1,3,4], [2,3,1,1,3], [1,1,3,2,0] ])
 	#print('matrix:')
 	#print(matrix)
 	
@@ -50,6 +48,8 @@ def makeMatrix(size):
 
 # Main  ************************************************************************
 def main(argv):
+	# argv[1] = n, matrix side dimension
+	
 	matrix = makeMatrix(argv[1])
 	print('matrix:')
 	print(matrix)

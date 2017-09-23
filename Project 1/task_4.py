@@ -40,8 +40,6 @@ def makeMatrix(size):
 				matrix[row,col] = random.randint(1,Max)
 	
 	# debug
-	#matrix = np.matrix([ [2,2,2,4,3], [2,2,3,3,3], [3,3,2,3,3], [4,3,2,2,2], [1,2,1,4,0] ])
-	#matrix = np.matrix([ [3,3,2,4,3], [2,2,2,1,1], [4,3,1,3,4], [2,3,1,1,3], [1,1,3,2,0] ])
 	#print('matrix:')
 	#print(matrix)
 	
@@ -66,35 +64,42 @@ class Queue():
 		return len(self.items)
 
 
+# Generate Node name from location data
 def encodeName(row,col):
 	name = '(' + str(row) + ',' + str(col) + ')'
 	return name
 
 
+# Deconstruct Node name for location data
 def decodeName(node):
 	name = node.name
 	digits = re.findall('\d+',name)
 	return int(digits[0]),int(digits[1])
 
 
+# Return a list of valid moves from given location
 def validMoves(matrix,visitMat,row,col):
 	valid_list = []
 	jump = int(matrix[row,col])
 	
+	# Right
 	test = int(col + jump)
-	if test < len(matrix) and visitMat[row,test] == 0:  # Right
+	if test < len(matrix) and visitMat[row,test] == 0:
 		valid_list.append( [row,test] )
 	
+	# Down
 	test = row + jump
-	if test < len(matrix) and visitMat[test,col] == 0:  # Down
+	if test < len(matrix) and visitMat[test,col] == 0:
 		valid_list.append( [test,col] )
 	
+	# Left
 	test = col - jump
-	if test >= 0 and visitMat[row,test] == 0:  # Left
+	if test >= 0 and visitMat[row,test] == 0:
 		valid_list.append( [row,test] )
 	
+	# Up
 	test = row - jump
-	if test >= 0 and visitMat[test,col] == 0:  # Up
+	if test >= 0 and visitMat[test,col] == 0:
 		valid_list.append( [test,col] )
 	
 	# debug
@@ -103,7 +108,7 @@ def validMoves(matrix,visitMat,row,col):
 	return valid_list
 
 
-# BFS algorithm
+# BFS algorithm to generate a tree solution to the matrix
 def evaluate(matrix,fileName='tree',row=0,col=0):
 	n = len(matrix)
 	
@@ -189,78 +194,51 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 	n = len(matrix)
 	N = int(argv1) * int(argv2)
 	restarts = int(argv1)
-	iterations = int(argv2)
+	sub_iterations = int(argv2)
 	
-	t = [0,0,0]
+	t = [0,0]
 	
 	k1 = 0
-	k2 = 0
 	matrix1 = np.copy(matrix)
-	matrix2 = np.copy(matrix1)
 	
 	best_k1 = 0
 	best_k2 = 0
 	best_root1 = Node('None')
-	best_root2 = Node('None')
 	best_matrix1 = np.copy(matrix1)
-	best_matrix2 = np.copy(matrix2)
 	
 	x = np.arange(N)
-	y1 = np.zeros(N)
-	y2 = []
+	y1 = []
 	
 	t[0] = time.time()
-	for i in range(N):
-		matrix1,k1,root1 = hillClimb(matrix1,fileName+'_'+str(n))
-		y1[i] = k1
-		if i == 0:
-			best_k1 = k1
-			best_root1 = root1
-			best_matrix1 = matrix1
-		elif y1[i] > best_k1:
-			best_k1 = k1
-			best_root1 = root1
-			best_matrix1 = matrix1
-	plt.plot(x,y1,'r-')
-	
-	t[1] = time.time()
-	
 	for re in range(restarts):
 		row = random.randint(0,n-1)
 		col = random.randint(0,n-1)
-		for i in range(iterations):
-			matrix2,k2,root2 = hillClimb(matrix2,fileName+'_'+str(n)+'_RR',row,col)
+		for i in range(sub_iterations):
+			matrix1,k1,root1 = hillClimb(matrix1,fileName+'_'+str(n)+'_RR',row,col)
 			if re == 0:
-				best_k2 = k2
-				best_root2 = root2
-				best_matrix2 = matrix2
-			elif k2 > best_k2:
-				best_k2 = k2
-				best_root2 = root2
-				best_matrix2 = matrix2
-			y2.append(best_k2)
-	plt.plot(x,y2,'b--')
-	t[2] = time.time()
+				best_k1 = k1
+				best_root1 = root1
+				best_matrix1 = matrix1
+			elif k1 > best_k1:
+				best_k1 = k1
+				best_root1 = root1
+				best_matrix1 = matrix1
+			y1.append(best_k1)
+	plt.plot(x,y1)
+	t[1] = time.time()
 	
 	RenderTreeGraph(best_root1).to_picture(fileName+'_'+str(n)+'.png')
-	RenderTreeGraph(best_root2).to_picture(fileName+'_'+str(n)+'_RR.png')
 	
 	# debug
-	print('Hill Climb - Final',str(n),'by',str(n),"Matrix:")
+	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix1)
 	print("Evaluation Function =",best_k1)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 	
-	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
-	print(best_matrix2)
-	print("Evaluation Function =",best_k2)
-	print("Elapsed Computational Time =",t[2]-t[1],"sec")
-	print('')
-	
 	# debug
 	plt.title(str(n)+' by '+str(n))
-	plt.legend(['Hill Climb','Hill Climb with Random Restarts'])
+	plt.legend(['Hill Climb with Random Restarts'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
 	plt.show()
@@ -268,6 +246,9 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 
 # Main  ************************************************************************
 def main(argv):
+	# argv[1] = number of restarts
+	# argv[2] = number of iterations per restart
+	
 	for arg in [5,7,9,11]:
 		matrix = makeMatrix(arg)
 		collectData(matrix,argv[1],argv[2],'task_4')
