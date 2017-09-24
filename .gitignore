@@ -1,2 +1,6 @@
 
 *.png
+
+*.txt
+
+Project 1/__pycache__/

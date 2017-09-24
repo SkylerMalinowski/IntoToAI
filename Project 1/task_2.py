@@ -6,6 +6,8 @@
 # **************************************************************************** #
 
 
+# Import other Tasks
+import task_1 as T1
 # Sys and Opt for CLI arguments and flags
 import sys, getopt
 # NumPy for math functions and data structures
@@ -19,15 +21,7 @@ from anytree.dotexport import RenderTreeGraph
 import re
 
 
-# Task 1  **********************************************************************
-def checkArgv(argv):
-	for validArgv in ['5','7','9','11']:
-		if argv[1] == validArgv:
-			return True
-	if '.txt' in argv[1]:
-		return True
-	return False
-
+# Task 2  **********************************************************************
 def fileParse(fileName):
 	file = open(fileName,'r')
 	data = file.readline()
@@ -52,30 +46,15 @@ def fileParse(fileName):
 	return npMatrix
 
 
-def makeMatrix(size):
+def dumpFile(matrix,fileName='matrix'):
+	fileName += '.txt'
 
-	n = int(size)
+	for line in matrix:
+		np.savetxt(fileName,matrix,fmt='%.0f')
 
-	# makes n by n matrix
-	matrix = np.zeros( shape=(n,n),dtype=np.int )
+	with open(fileName, 'r') as original: data = original.read()
+	with open(fileName, 'w') as modified: modified.write(str(len(matrix))+'\n' + data)
 
-	# populates n by n matrix
-	for row in range(n):
-		for col in range(n):
-			Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
-			if Max == 0:
-				matrix[row,col] = 0
-			else:
-				matrix[row,col] = random.randint(1,Max)
-
-	# debug
-	print('matrix:')
-	print(matrix)
-
-	return matrix
-
-
-# Task 2  **********************************************************************
 class Queue():
 	def __init__(self):
 		self.items = []
@@ -183,13 +162,14 @@ def main(argv):
 	if '.txt' in argv[1]:
 		matrix = fileParse(argv[1])
 	else:
-		matrix = makeMatrix(argv[1])
-	k = evaluate(matrix,'task_2')
+		matrix = T1.makeMatrix(argv[1])
+	k = evaluate(matrix,'T2')
+	dumpFile(matrix,'T2')
 
 
 # run main module if not imported
 if __name__ == "__main__":
-	if checkArgv(sys.argv) == False:
+	if T1.checkArgv(sys.argv) == False:
 		print("arguement error: not in domain [5,7,9,11] or a file")
 	else:
 		main(sys.argv)

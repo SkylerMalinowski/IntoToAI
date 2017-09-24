@@ -6,6 +6,11 @@
 # **************************************************************************** #
 
 
+# Import other Tasks
+import task_1 as T1
+import task_2 as T2
+import task_3 as T3
+import task_4 as T4
 # Sys and Opt for CLI arguments and flags
 import sys, getopt
 # NumPy for math functions and data structures
@@ -22,7 +27,7 @@ import matplotlib.pyplot as plt
 # Time for stopwatch
 import time
 
-
+'''
 # Task 1  **********************************************************************
 def makeMatrix(size):
 	n = int(size)
@@ -150,7 +155,7 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 
 	return k,root
 
-
+'''
 # Task 5 ***********************************************************************
 def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	n = len(matrix)
@@ -166,8 +171,8 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	Max = max(n-1-rand_row,rand_row-n-1,n-1-rand_col,rand_col-n-1)
 	new_matrix[rand_row,rand_col] = random.randint(1,Max)
 
-	k1,root1 = evaluate(new_matrix,fileName,row,col)
-	k2,root2 = evaluate(matrix,fileName,row,col)
+	k1,root1 = T3.evaluate(new_matrix,fileName,row,col)
+	k2,root2 = T3.evaluate(matrix,fileName,row,col)
 
 	# debug
 	#print('Matrix 1:')
@@ -189,44 +194,43 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 		return new_matrix,k1,root1
 
 
-def collectData(matrix,argv1,argv2,fileName='tree'):
+def collectData(matrix,argv1,argv2,fileName='task_5'):
 	n = len(matrix)
 	N = int(argv1)
 	p = float(argv2)
 
 	t = [0,0]
+	k = 0
 
-	k1 = 0
-	matrix1 = np.copy(matrix)
-
-	best_k1 = 0
-	best_root1 = Node('None')
-	best_matrix1 = np.copy(matrix1)
+	best_k = 0
+	best_root = Node('None')
+	best_matrix = np.copy(matrix)
 
 	x = np.arange(N)
-	y1 = np.zeros(N)
+	y = np.zeros(N)
 
 	t[0] = time.time()
 	for i in range(N):
-		matrix1,k1,root1 = hillClimb_random_walk(matrix1,p,fileName+'_'+str(n))
+		matrix,k,root = hillClimb_random_walk(matrix,p,fileName+'_S'+str(n))
 		if i == 0:
-			best_k1 = k1
-			best_root1 = root1
-			best_matrix1 = matrix1
-		elif y1[i] > best_k1:
-			best_k1 = k1
-			best_root1 = root1
-			best_matrix1 = matrix1
-		y1[i] = k1
-	plt.plot(x,y1)
+			best_k = k
+			best_root = root
+			best_matrix = matrix
+		elif y[i] > best_k:
+			best_k = k
+			best_root = root
+			best_matrix = matrix
+		y[i] = k
+	plt.plot(x,y)
 	t[1] = time.time()
 
-	RenderTreeGraph(best_root1).to_picture(fileName+'_S'+str(n)+'.png')
+	RenderTreeGraph(best_root).to_picture(fileName+'_S'+str(n)+'.png')
+	T2.dumpFile(best_matrix,fileName+'_S'+str(n))
 
 	# debug
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")
-	print(best_matrix1)
-	print("Evaluation Function =",best_k1)
+	print(best_matrix)
+	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
@@ -244,7 +248,7 @@ def main(argv):
 	# argv[2] = threshold probability [0 -> hill climb; 1 -> with random walk]
 
 	for arg in [5,7,9,11]:
-		matrix = makeMatrix(arg)
+		matrix = T1.makeMatrix(arg)
 		collectData(matrix,argv[1],argv[2],'T5_RW')
 
 

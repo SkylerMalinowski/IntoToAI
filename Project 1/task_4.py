@@ -5,7 +5,10 @@
 # CS 440
 # **************************************************************************** #
 
-
+# Import other Tasks
+import task_1 as T1
+import task_2 as T2
+import task_3 as T3
 # Sys and Opt for CLI arguments and flags
 import sys, getopt
 # NumPy for math functions and data structures
@@ -22,7 +25,7 @@ import matplotlib.pyplot as plt
 # Time for stopwatch
 import time
 
-
+'''
 # Task 1  **********************************************************************
 def makeMatrix(size):
 	n = int(size)
@@ -188,51 +191,50 @@ def hillClimb(matrix,fileName='tree',row=0,col=0):
 		#RenderTreeGraph(root2).to_picture(fileName)
 		return matrix,k2,root2
 
+'''
 
 # Task 4  **********************************************************************
-def collectData(matrix,argv1,argv2,fileName='tree'):
+def collectData(matrix,argv1,argv2,fileName='task_4'):
 	n = len(matrix)
 	N = int(argv1) * int(argv2)
 	restarts = int(argv1)
 	sub_iterations = int(argv2)
 
 	t = [0,0]
+	k = 0
 
-	k1 = 0
-	matrix1 = np.copy(matrix)
-
-	best_k1 = 0
-	best_k2 = 0
-	best_root1 = Node('None')
-	best_matrix1 = np.copy(matrix1)
+	best_k = 0
+	best_root = Node('None')
+	best_matrix = np.copy(matrix)
 
 	x = np.arange(N)
-	y1 = []
+	y = []
 
 	t[0] = time.time()
 	for re in range(restarts):
 		row = random.randint(0,n-1)
 		col = random.randint(0,n-1)
 		for i in range(sub_iterations):
-			matrix1,k1,root1 = hillClimb(matrix1,fileName+'_'+str(n)+'_RR',row,col)
+			matrix,k,root = T3.hillClimb(matrix,fileName+'_S'+str(n),row,col)
 			if re == 0:
-				best_k1 = k1
-				best_root1 = root1
-				best_matrix1 = matrix1
-			elif k1 > best_k1:
-				best_k1 = k1
-				best_root1 = root1
-				best_matrix1 = matrix1
-			y1.append(best_k1)
-	plt.plot(x,y1)
+				best_k = k
+				best_root = root
+				best_matrix = matrix
+			elif k > best_k:
+				best_k = k
+				best_root = root
+				best_matrix = matrix
+			y.append(best_k)
+	plt.plot(x,y)
 	t[1] = time.time()
 
-	RenderTreeGraph(best_root1).to_picture(fileName+'_S'+str(n)+'.png')
+	RenderTreeGraph(best_root).to_picture(fileName+'_S'+str(n)+'.png')
+	T2.dumpFile(best_matrix,fileName+'_S'+str(n))
 
 	# debug
 	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
-	print(best_matrix1)
-	print("Evaluation Function =",best_k1)
+	print(best_matrix)
+	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
@@ -250,7 +252,7 @@ def main(argv):
 	# argv[2] = number of iterations per restart
 
 	for arg in [5,7,9,11]:
-		matrix = makeMatrix(arg)
+		matrix = T1.makeMatrix(arg)
 		collectData(matrix,argv[1],argv[2],'T4_RR')
 
 
