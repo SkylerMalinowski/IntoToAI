@@ -24,14 +24,6 @@ import time
 
 
 # Task 1  **********************************************************************
-def checkArgv(argv):
-	for validArgv in ['5','7','9','11']:
-		if argv[1] == validArgv:
-			return True
-
-	return False
-
-
 def makeMatrix(size):
 	n = int(size)
 
@@ -87,20 +79,24 @@ def validMoves(matrix,visitMat,row,col):
 	valid_list = []
 	jump = int(matrix[row,col])
 
+	# Right
 	test = int(col + jump)
-	if test < len(matrix) and visitMat[row,test] == 0:  # Right
+	if test < len(matrix) and visitMat[row,test] == 0:
 		valid_list.append( [row,test] )
 
+	# Down
 	test = row + jump
-	if test < len(matrix) and visitMat[test,col] == 0:  # Down
+	if test < len(matrix) and visitMat[test,col] == 0:
 		valid_list.append( [test,col] )
 
+	# Left
 	test = col - jump
-	if test >= 0 and visitMat[row,test] == 0:  # Left
+	if test >= 0 and visitMat[row,test] == 0:
 		valid_list.append( [row,test] )
 
+	# Up
 	test = row - jump
-	if test >= 0 and visitMat[test,col] == 0:  # Up
+	if test >= 0 and visitMat[test,col] == 0:
 		valid_list.append( [test,col] )
 
 	# debug
@@ -155,41 +151,6 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	return k,root
 
 
-# Task 3  **********************************************************************
-def hillClimb(matrix,fileName='tree',row=0,col=0):
-	n = len(matrix)
-	new_matrix = np.copy(matrix)
-
-	rand_row = random.randint(0,n-1)
-	rand_col = random.randint(0,n-1)
-
-	while(rand_row is not 0 and rand_col is not 0 or rand_row is not n-1 and rand_col is not n-1):
-		rand_row = random.randint(0,n-1)
-		rand_col = random.randint(0,n-1)
-
-	Max = max(n-1-rand_row,rand_row-n-1,n-1-rand_col,rand_col-n-1)
-	new_matrix[rand_row,rand_col] = random.randint(1,Max)
-
-	k1,root1 = evaluate(new_matrix,fileName,row,col)
-	k2,root2 = evaluate(matrix,fileName,row,col)
-
-	# debug
-	#print('Matrix 1:')
-	#print(mat)
-	#print('Value Function 1 =',k1)
-	#print('Matrix 2:')
-	#print(new_mat)
-	#print('Value Function 2 =',k2)
-
-	#fileName += '.png'
-	if k1 > k2:
-		#RenderTreeGraph(root1).to_picture(fileName)
-		return new_matrix,k1,root1
-	else:
-		#RenderTreeGraph(root2).to_picture(fileName)
-		return matrix,k2,root2
-
-
 # Task 5 ***********************************************************************
 def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	n = len(matrix)
@@ -217,40 +178,37 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	#print('Value Function 2 =',k2)
 
 	#fileName += '.png'
-	if k1 > k2:
-		#RenderTreeGraph(root1).to_picture(fileName)
-		print("^")
-		return new_matrix,k1,root1
-	elif random.random() <= p:
-		#RenderTreeGraph(root2).to_picture(fileName)
-		print("v")
-		return new_matrix,k1,root1
+	if random.random() >= p:  # Hill Climb
+		if k1 > k2:
+			#RenderTreeGraph(root1).to_picture(fileName)
+			return new_matrix,k1,root1
+		else:  # Random Walk
+			#RenderTreeGraph(root2).to_picture(fileName)
+			return matrix,k2,root2
 	else:
-		print(">")
-		return matrix,k2,root2
+		return new_matrix,k1,root1
 
 
 def collectData(matrix,argv1,argv2,fileName='tree'):
 	n = len(matrix)
 	N = int(argv1)
 	p = float(argv2)
-	
+
 	t = [0,0]
-	
+
 	k1 = 0
 	matrix1 = np.copy(matrix)
-	
+
 	best_k1 = 0
 	best_root1 = Node('None')
 	best_matrix1 = np.copy(matrix1)
-	
-	x = np.arange(n)
-	y1 = np.zeros(n)
-	
+
+	x = np.arange(N)
+	y1 = np.zeros(N)
+
 	t[0] = time.time()
 	for i in range(N):
 		matrix1,k1,root1 = hillClimb_random_walk(matrix1,p,fileName+'_'+str(n))
-		y1[i] = k1
 		if i == 0:
 			best_k1 = k1
 			best_root1 = root1
@@ -259,10 +217,11 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 			best_k1 = k1
 			best_root1 = root1
 			best_matrix1 = matrix1
+		y1[i] = k1
 	plt.plot(x,y1)
 	t[1] = time.time()
 
-	RenderTreeGraph(best_root1).to_picture(fileName+'_'+str(n)+'.png')
+	RenderTreeGraph(best_root1).to_picture(fileName+'_S'+str(n)+'.png')
 
 	# debug
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")
@@ -278,14 +237,15 @@ def collectData(matrix,argv1,argv2,fileName='tree'):
 	plt.ylabel('Evaluation Function Value (k)')
 	plt.show()
 
+
 # Main  ************************************************************************
 def main(argv):
 	# argv[1] = number of iterations
 	# argv[2] = threshold probability [0 -> hill climb; 1 -> with random walk]
-	
+
 	for arg in [5,7,9,11]:
 		matrix = makeMatrix(arg)
-		collectData(matrix,argv[1],argv[2],'task_5')
+		collectData(matrix,argv[1],argv[2],'T5_RW')
 
 
 # run main module if not imported

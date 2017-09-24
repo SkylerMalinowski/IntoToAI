@@ -30,7 +30,13 @@ def checkArgv(argv):
 
 def fileParse(fileName):
 	file = open(fileName,'r')
+	data = file.readline()
+	data = data.split()
 	matrix = []
+
+	if len(data) > 1:
+		data = [int(i) for i in line.split()]
+		matrix.append(data)
 
 	for line in file:
 		data = [int(i) for i in line.split()]
@@ -63,8 +69,6 @@ def makeMatrix(size):
 				matrix[row,col] = random.randint(1,Max)
 
 	# debug
-	#matrix = np.matrix([ [2,2,2,4,3], [2,2,3,3,3], [3,3,2,3,3], [4,3,2,2,2], [1,2,1,4,0] ])
-	#matrix = np.matrix([ [3,3,2,4,3], [2,2,2,1,1], [4,3,1,3,4], [2,3,1,1,3], [1,1,3,2,0] ])
 	print('matrix:')
 	print(matrix)
 
@@ -175,7 +179,7 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 # Main  ************************************************************************
 def main(argv):
 	# argv[1] = n, matrix side dimension || inout file name
-	
+
 	if '.txt' in argv[1]:
 		matrix = fileParse(argv[1])
 	else:
