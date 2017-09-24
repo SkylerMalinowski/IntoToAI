@@ -86,7 +86,10 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 		rand_col = random.randint(0,n-1)
 
 	Max = max(n-1-rand_row,rand_row-n-1,n-1-rand_col,rand_col-n-1)
-	new_matrix[rand_row,rand_col] = random.randint(1,Max)
+
+	old_val = matrix[rand_row,rand_col]
+	while( new_matrix[rand_row,rand_col] == old_val ):
+		new_matrix[rand_row,rand_col] = random.randint(1,Max)
 
 	k1,root1 = evaluate(new_matrix,fileName,row,col)
 	k2,root2 = evaluate(matrix,fileName,row,col)
@@ -100,7 +103,7 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 	#print('Value Function 2 =',k2)
 
 	#fileName += '.png'
-	if k1 > k2:
+	if k1 >= k2:
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:
@@ -130,7 +133,6 @@ def main(argv):
 		t[0] = time.time()
 		for i in range(N):
 			matrix,k,root = hillClimb(matrix,fileName+'_S'+str(arg))
-			y[i] = k
 			if i == 0:
 				best_k = k
 				best_root = root
@@ -139,6 +141,7 @@ def main(argv):
 				best_k = k
 				best_root = root
 				best_matrix = matrix
+			y[i] = k
 		t[1] = time.time()
 
 		plt.plot(x,y)

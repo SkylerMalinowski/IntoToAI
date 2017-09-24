@@ -39,10 +39,6 @@ def fileParse(fileName):
 
 	npMatrix = np.array(matrix)
 
-	#debug
-	print('matrix:')
-	print(npMatrix)
-
 	return npMatrix
 
 
@@ -110,8 +106,7 @@ def validMoves(matrix,visitMat,row,col):
 
 
 # BFS algorithm
-def evaluate(matrix,fileName='tree',row=0,col=0):
-	fileName = fileName + '.png'
+def evaluate(matrix,fileName='task_2',row=0,col=0):
 	n = len(matrix)
 
 	visitMat = np.zeros( shape=(n,n),dtype=np.int )
@@ -143,6 +138,8 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 		k = evalMat[n-1,n-1]
 
 	# debug
+	#print('matrix:')
+	#print(matrix)
 	#print('visitMat:')
 	#print(visitMat)
 	print('evalMat:')
@@ -150,7 +147,8 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	print('Value Function =',k)
 
 	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName)
+	RenderTreeGraph(root).to_picture(fileName+'_S'+str(n)+'.png')
+	dumpFile(matrix,fileName+'_S'+str(n))
 
 	return k
 
@@ -163,13 +161,12 @@ def main(argv):
 		matrix = fileParse(argv[1])
 	else:
 		matrix = T1.makeMatrix(argv[1])
+
+	print('matrix:')
+	print(matrix)
 	k = evaluate(matrix,'T2')
-	dumpFile(matrix,'T2')
 
 
 # run main module if not imported
 if __name__ == "__main__":
-	if T1.checkArgv(sys.argv) == False:
-		print("arguement error: not in domain [5,7,9,11] or a file")
-	else:
-		main(sys.argv)
+	main(sys.argv)
