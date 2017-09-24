@@ -78,17 +78,20 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 	n = len(matrix)
 	new_matrix = np.copy(matrix)
 
+	goal_row = n-1
+	goal_col = n-1
+
 	rand_row = random.randint(0,n-1)
 	rand_col = random.randint(0,n-1)
 
-	while(rand_row is not 0 and rand_col is not 0 or rand_row is not n-1 and rand_col is not n-1):
+	while(rand_row == goal_row and rand_col == goal_col):
 		rand_row = random.randint(0,n-1)
 		rand_col = random.randint(0,n-1)
 
-	Max = max(n-1-rand_row,rand_row-n-1,n-1-rand_col,rand_col-n-1)
+	Max = max(abs(n-1-rand_row),abs(rand_row-n-1),abs(n-1-rand_col),abs(rand_col-n-1))
 
 	old_val = matrix[rand_row,rand_col]
-	while( new_matrix[rand_row,rand_col] == old_val ):
+	while( new_matrix[rand_row,rand_col] == old_val):
 		new_matrix[rand_row,rand_col] = random.randint(1,Max)
 
 	k1,root1 = evaluate(new_matrix,fileName,row,col)
@@ -128,7 +131,7 @@ def main(argv):
 	x = np.arange(N)
 	y = np.zeros(N,dtype=np.int)
 
-	for arg in [5,7,9,11]:
+	for arg in [5]:
 		matrix = T1.makeMatrix(arg)
 		t[0] = time.time()
 		for i in range(N):
