@@ -67,9 +67,11 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 	print("new k =",k1)
 	print('old k =',k2)
 	print('T = ',T)
-
-	y = math.exp((k1-k2)/T)
-
+	try:
+		y = math.exp((k1-k2)/T)
+	except (OverflowError):
+		
+		y = 0
 	print('x = ',x)
 	print('y = ',y)
 
