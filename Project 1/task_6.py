@@ -84,7 +84,7 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 	n = len(matrix)
 	N = int(argv1)
 	T = int(argv2)
-	d= float(argv3)
+	d = float(argv3)
 
 	t = [0,0]
 
@@ -93,7 +93,7 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 
 	best_k = 0
 	best_root = Node('None')
-	best_matrix = np.copy(matrix)
+	best_matrix = []
 
 	x = np.arange(N)
 	y = np.zeros(N)
@@ -103,16 +103,11 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 	#print(T)
 	for i in range(N):
 		matrix,k,root,T = hillClimb_simulated_annealing(matrix,T,fileName+'_'+str(n))
-		if i == 0:
-			best_k = k
-			best_root = root
-			best_matrix = matrix
-		elif y[i] > best_k:
+		if i == 0 or k > best_k:
 			best_k = k
 			best_root = root
 			best_matrix = matrix
 		T = d*T
-		#print(T)
 		y[i] = k
 	plt.plot(x,y)
 	t[1] = time.time()

@@ -106,7 +106,7 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 	#print('Value Function 2 =',k2)
 
 	#fileName += '.png'
-	if k1 >= k2:
+	if k1 > k2:
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:
@@ -136,11 +136,7 @@ def main(argv):
 		t[0] = time.time()
 		for i in range(N):
 			matrix,k,root = hillClimb(matrix,fileName+'_S'+str(arg))
-			if i == 0:
-				best_k = k
-				best_root = root
-				best_matrix = matrix
-			elif k > best_k:
+			if i == 0 or k > best_k:
 				best_k = k
 				best_root = root
 				best_matrix = matrix

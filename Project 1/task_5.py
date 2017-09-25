@@ -61,7 +61,7 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	#print('Value Function 2 =',k2)
 
 	#fileName += '.png'
-	if k1 >= k2:
+	if k1 > k2:
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:  # Random Walk
@@ -83,7 +83,7 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 
 	best_k = 0
 	best_root = Node('None')
-	best_matrix = np.copy(matrix)
+	best_matrix = []
 
 	x = np.arange(N)
 	y = np.zeros(N)
@@ -91,11 +91,7 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 	t[0] = time.time()
 	for i in range(N):
 		matrix,k,root = hillClimb_random_walk(matrix,p,fileName+'_S'+str(n))
-		if i == 0:
-			best_k = k
-			best_root = root
-			best_matrix = matrix
-		elif y[i] > best_k:
+		if i == 0 or k > best_k:
 			best_k = k
 			best_root = root
 			best_matrix = matrix

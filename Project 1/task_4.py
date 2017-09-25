@@ -38,7 +38,7 @@ def collectData(matrix,argv1,argv2,fileName='task_4'):
 
 	best_k = 0
 	best_root = Node('None')
-	best_matrix = np.copy(matrix)
+	best_matrix = []
 
 	x = np.arange(N)
 	y = []
