@@ -70,7 +70,7 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 	except (OverflowError):
 		y = 0
 
-	if k1 > k2:  # Hill Climb
+	if k1 >= k2:  # Hill Climb
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1,T
 	elif(x <= y):  # Random Walk

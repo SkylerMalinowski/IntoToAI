@@ -106,7 +106,7 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 	#print('Value Function 2 =',k2)
 
 	#fileName += '.png'
-	if k1 > k2:
+	if k1 >= k2:
 		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:
