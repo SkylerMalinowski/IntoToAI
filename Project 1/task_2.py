@@ -147,8 +147,8 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	print('Value Function =',k)
 
 	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName+'_S'+str(n)+'.png')
-	dumpFile(matrix,fileName+'_S'+str(n))
+	RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
+	dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
 
 	return k
 

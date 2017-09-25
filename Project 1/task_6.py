@@ -64,16 +64,11 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 
 	#fileName += '.png'
 	x = float(random.random())
-	print("new k =",k1)
-	print('old k =',k2)
-	print('T = ',T)
+
 	try:
 		y = math.exp((k1-k2)/T)
 	except (OverflowError):
-		
 		y = 0
-	print('x = ',x)
-	print('y = ',y)
 
 	if k1 > k2:  # Hill Climb
 		#RenderTreeGraph(root1).to_picture(fileName)
@@ -122,8 +117,9 @@ def collectData(matrix,argv1,argv2,argv3,fileName='tree'):
 	plt.plot(x,y)
 	t[1] = time.time()
 
-	RenderTreeGraph(best_root).to_picture(fileName+'_S'+str(n)+'.png')
-	T2.dumpFile(best_matrix,fileName+'_S'+str(n))
+	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+best_k+'.png')
+	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+best_k)
 
 	# debug
 	print('Hill Climb with Simulated Annealing - Final',str(n),'by',str(n),"Matrix:")
@@ -137,6 +133,7 @@ def collectData(matrix,argv1,argv2,argv3,fileName='tree'):
 	plt.legend(['Hill Climb with Simulated Annealing'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
+	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
 	plt.show()
 
 

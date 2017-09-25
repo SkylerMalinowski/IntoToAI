@@ -103,8 +103,9 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 	plt.plot(x,y)
 	t[1] = time.time()
 
-	RenderTreeGraph(best_root).to_picture(fileName+'_S'+str(n)+'.png')
-	T2.dumpFile(best_matrix,fileName+'_S'+str(n))
+	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
+	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+best_k+'.png')
+	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+best_k)
 
 	# debug
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")
@@ -118,6 +119,7 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 	plt.legend(['Hill Climb with Random Walk'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
+	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
 	plt.show()
 
 

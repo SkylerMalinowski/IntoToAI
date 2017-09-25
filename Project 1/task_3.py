@@ -131,7 +131,7 @@ def main(argv):
 	x = np.arange(N)
 	y = np.zeros(N,dtype=np.int)
 
-	for arg in [5]:
+	for arg in [5,7,9,11]:
 		matrix = T1.makeMatrix(arg)
 		t[0] = time.time()
 		for i in range(N):
@@ -148,8 +148,10 @@ def main(argv):
 		t[1] = time.time()
 
 		plt.plot(x,y)
-		RenderTreeGraph(best_root).to_picture(fileName+'_S'+str(arg)+'.png')
-		T2.dumpFile(best_matrix,fileName+'_S'+str(arg))
+
+		#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
+		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
+		T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
 
 		# debug
 		print('Final',arg,'by',arg,"Matrix:")
@@ -161,6 +163,7 @@ def main(argv):
 	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
+	plt.savefig(fileName+'_fig'+'.png')
 	plt.show()
 
 
