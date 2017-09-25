@@ -9,6 +9,7 @@
 
 # Import other Tasks
 import task_1 as T1
+import task_8 as T8
 # Sys and Opt for CLI arguments and flags
 import sys, getopt, os
 # NumPy for math functions and data structures
@@ -105,7 +106,7 @@ def validMoves(matrix,visitMat,row,col):
 
 
 # BFS algorithm
-def evaluate(matrix,fileName='task_2',row=0,col=0):
+def evaluate(matrix,fileName='T2_EM',row=0,col=0):
 	n = len(matrix)
 
 	visitMat = np.zeros( shape=(n,n),dtype=np.int )
@@ -140,32 +141,16 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	print(evalMat)
 	print('Value Function =',k)
 
-	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	sum = 0
-	fileRoot = fileName+'_n'+str(n)+'_k'
-	for file in os.listdir():
-		if file.find(fileRoot) is not -1:
-			sum += 1
-	if sum > 0:
-		for file in os.listdir():
-			if file.find(fileRoot) is not -1:
-				file_k = file.split('_k',1)
-				file_k = file_k[1]
-				file_k = int(file_k[:-4])
-				if k > file_k:
-					os.remove(file)
-					RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
-					dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
-	else:
-		RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'_k'+str(k)+'.png')
-		dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
+	#print(RenderTree(root,style=AsciiStyle()).by_attr())
+	T8.saveBest(matrix,k,root)
+	T8.saveBest(matrix,k,root,fileName)
 
 	return k
 
 
 # Main  ************************************************************************
 def main(argv):
-	# argv[1] = n, matrix side dimension || inout file name
+	# argv[1] = matrix size || i/o file name
 
 	if '.txt' in argv[1]:
 		matrix = fileParse(argv[1])
@@ -174,7 +159,7 @@ def main(argv):
 
 	print('matrix:')
 	print(matrix)
-	k = evaluate(matrix,'T2')
+	k = evaluate(matrix)
 
 
 # run main module if not imported

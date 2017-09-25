@@ -10,6 +10,7 @@
 import task_1 as T1
 import task_2 as T2
 import task_3 as T3
+import task_8 as T8
 # Sys and Opt for CLI arguments and flags
 import sys, getopt, os
 # NumPy for math functions and data structures
@@ -62,25 +63,9 @@ def collectData(matrix,argv1,argv2,fileName='T4_RR'):
 	plt.plot(x,y)
 	t[1] = time.time()
 
-	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-	sum = 0
-	fileRoot = fileName+'_n'+str(n)+'_k'
-	for file in os.listdir():
-		if file.find(fileRoot) is not -1:
-			sum += 1
-	if sum > 0:
-		for file in os.listdir():
-			if file.find(fileRoot) is not -1:
-				file_k = file.split('_k',1)
-				file_k = file_k[1]
-				file_k = int(file_k[:-4])
-				if k > file_k:
-					os.remove(file)
-					RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
-					T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
-	else:
-		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
-		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
+	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
+	T8.saveBest(best_matrix,best_k,best_root)
+	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
