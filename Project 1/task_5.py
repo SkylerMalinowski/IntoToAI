@@ -104,8 +104,8 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 	t[1] = time.time()
 
 	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+best_k+'.png')
-	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+best_k)
+	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
 	# debug
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")

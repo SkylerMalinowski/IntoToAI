@@ -80,7 +80,7 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 		return matrix,k2,root2,T
 
 
-def collectData(matrix,argv1,argv2,argv3,fileName='tree'):
+def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 	n = len(matrix)
 	N = int(argv1)
 	T = int(argv2)
@@ -118,8 +118,8 @@ def collectData(matrix,argv1,argv2,argv3,fileName='tree'):
 	t[1] = time.time()
 
 	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+best_k+'.png')
-	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+best_k)
+	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
 	# debug
 	print('Hill Climb with Simulated Annealing - Final',str(n),'by',str(n),"Matrix:")
