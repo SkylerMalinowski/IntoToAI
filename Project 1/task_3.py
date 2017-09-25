@@ -59,17 +59,6 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 	else:
 		k = evalMat[n-1,n-1]
 
-	#debug
-	#print('visitMat:')
-	#print(visitMat)
-	#print('evalMat:')
-	#print(evalMat)
-	#print('Value Function =',k)
-
-	#fileName = fileName + '.png'
-	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	#RenderTreeGraph(root).to_picture(fileName)
-
 	return k,root
 
 
@@ -97,20 +86,9 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 	k1,root1 = evaluate(new_matrix,fileName,row,col)
 	k2,root2 = evaluate(matrix,fileName,row,col)
 
-	# debug
-	#print('Matrix 1:')
-	#print(mat)
-	#print('Value Function 1 =',k1)
-	#print('Matrix 2:')
-	#print(new_mat)
-	#print('Value Function 2 =',k2)
-
-	#fileName += '.png'
 	if k1 >= k2:
-		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:
-		#RenderTreeGraph(root2).to_picture(fileName)
 		return matrix,k2,root2
 
 
@@ -165,13 +143,11 @@ def main(argv):
 			RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
 			T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
 
-		# debug
 		print('Final',arg,'by',arg,"Matrix:")
 		print(matrix)
 		print("Evaluation Function =",k)
 		print("Elapsed Computational Time =",t[1]-t[0],"sec")
 
-	# debug
 	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')

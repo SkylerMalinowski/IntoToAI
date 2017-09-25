@@ -54,15 +54,6 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 	k1,root1 = T3.evaluate(new_matrix,fileName,row,col)
 	k2,root2 = T3.evaluate(matrix,fileName,row,col)
 
-	# debug
-	#print('Matrix 1:')
-	#print(mat)
-	#print('Value Function 1 =',k1)
-	#print('Matrix 2:')
-	#print(new_mat)
-	#print('Value Function 2 =',k2)
-
-	#fileName += '.png'
 	x = float(random.random())
 
 	try:
@@ -71,10 +62,8 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 		y = 0
 
 	if k1 >= k2:  # Hill Climb
-		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1,T
 	elif(x <= y):  # Random Walk
-		#RenderTreeGraph(root2).to_picture(fileName)
 		return new_matrix,k1,root1,T
 	else:
 		return matrix,k2,root2,T
@@ -99,8 +88,7 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 	y = np.zeros(N)
 
 	t[0] = time.time()
-	#print("initial T")
-	#print(T)
+
 	for i in range(N):
 		matrix,k,root,T = hillClimb_simulated_annealing(matrix,T,fileName+'_'+str(n))
 		if i == 0 or k > best_k:
@@ -132,14 +120,12 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
 		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
-	# debug
 	print('Hill Climb with Simulated Annealing - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
 	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
-	# debug
 	plt.title(str(n)+' by '+str(n))
 	plt.legend(['Hill Climb with Simulated Annealing'])
 	plt.xlabel('Iteration (i)')

@@ -52,22 +52,10 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 	k1,root1 = T3.evaluate(new_matrix,fileName,row,col)
 	k2,root2 = T3.evaluate(matrix,fileName,row,col)
 
-	# debug
-	#print('Matrix 1:')
-	#print(mat)
-	#print('Value Function 1 =',k1)
-	#print('Matrix 2:')
-	#print(new_mat)
-	#print('Value Function 2 =',k2)
-
-	#fileName += '.png'
 	if k1 >= k2:
-		#RenderTreeGraph(root1).to_picture(fileName)
 		return new_matrix,k1,root1
 	else:  # Random Walk
-		#RenderTreeGraph(root2).to_picture(fileName)
 		if(random.random() <= p):  # Random Walk
-			#RenderTreeGraph(root2).to_picture(fileName)
 			return new_matrix,k1,root1
 		else:
 			return matrix,k2,root2
@@ -119,14 +107,12 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
 		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
-	# debug
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
 	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
-	# debug
 	plt.title(str(n)+' by '+str(n))
 	plt.legend(['Hill Climb with Random Walk'])
 	plt.xlabel('Iteration (i)')

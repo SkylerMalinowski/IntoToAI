@@ -81,14 +81,12 @@ def collectData(matrix,argv1,argv2,fileName='task_4'):
 		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
 		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
-	# debug
 	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
 	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
-	# debug
 	plt.title(str(n)+' by '+str(n))
 	plt.legend(['Hill Climb with Random Restarts'])
 	plt.xlabel('Iteration (i)')

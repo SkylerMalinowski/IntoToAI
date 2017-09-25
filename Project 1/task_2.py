@@ -99,9 +99,6 @@ def validMoves(matrix,visitMat,row,col):
 	if test >= 0 and visitMat[test,col] == 0:  # Up
 		valid_list.append( [test,col] )
 
-	# debug
-	#print(valid_list)
-
 	return valid_list
 
 
@@ -114,7 +111,7 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	evalMat.fill(-1)
 	Q = Queue()
 
-	root = Node(encodeName(row,col))  # root tree node
+	root = Node(encodeName(row,col))
 	Q.enqueue(root)
 
 	while( Q.isEmpty() == False ):
@@ -137,11 +134,6 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	else:
 		k = evalMat[n-1,n-1]
 
-	# debug
-	#print('matrix:')
-	#print(matrix)
-	#print('visitMat:')
-	#print(visitMat)
 	print('evalMat:')
 	print(evalMat)
 	print('Value Function =',k)
@@ -165,8 +157,6 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	else:
 		RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
 		dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
-
-
 
 	return k
 

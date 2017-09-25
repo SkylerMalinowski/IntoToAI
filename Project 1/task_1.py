@@ -17,11 +17,8 @@ import random
 # Task 1  **********************************************************************
 def makeMatrix(size):
 	n = int(size)
-
-	# makes n by n matrix
 	matrix = np.zeros( shape=(n,n),dtype=np.int )
 
-	# populates n by n matrix
 	for row in range(n):
 		for col in range(n):
 			Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
@@ -29,10 +26,6 @@ def makeMatrix(size):
 				matrix[row,col] = 0
 			else:
 				matrix[row,col] = random.randint(1,Max)
-
-	# debug
-	#print('matrix:')
-	#print(matrix)
 
 	return matrix
 
