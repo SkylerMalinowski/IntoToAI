@@ -2,6 +2,7 @@
 # Skyler Malinowski [ som12 ]
 # Andrew Dos Reis [ ad1005 ]
 # Project 1
+# task_4.py
 # CS 440
 # **************************************************************************** #
 
@@ -27,7 +28,7 @@ import time
 
 
 # Task 4  **********************************************************************
-def collectData(matrix,argv1,argv2,fileName='task_4'):
+def collectData(matrix,argv1,argv2,fileName='T4_RR'):
 	n = len(matrix)
 	N = int(argv1) * int(argv2)
 	restarts = int(argv1)
@@ -92,7 +93,7 @@ def collectData(matrix,argv1,argv2,fileName='task_4'):
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
 	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
-	plt.show()
+	plt.draw()
 
 
 # Main  ************************************************************************
@@ -102,7 +103,8 @@ def main(argv):
 
 	for arg in [5,7,9,11]:
 		matrix = T1.makeMatrix(arg)
-		collectData(matrix,argv[1],argv[2],'T4_RR')
+		collectData(matrix,argv[1],argv[2])
+		plt.show()
 
 
 # run main module if not imported

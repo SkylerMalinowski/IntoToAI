@@ -2,6 +2,7 @@
 # Skyler Malinowski [ som12 ]
 # Andrew Dos Reis [ ad1005 ]
 # Project 1
+# task_5.py
 # CS 440
 # **************************************************************************** #
 
@@ -61,7 +62,7 @@ def hillClimb_random_walk(matrix,p,fileName='tree',row=0,col=0):
 			return matrix,k2,root2
 
 
-def collectData(matrix,argv1,argv2,fileName='task_5'):
+def collectData(matrix,argv1,argv2,fileName='T5_RW'):
 	n = len(matrix)
 	N = int(argv1)
 	p = float(argv2)
@@ -118,7 +119,7 @@ def collectData(matrix,argv1,argv2,fileName='task_5'):
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
 	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
-	plt.show()
+	plt.draw()
 
 
 # Main  ************************************************************************
@@ -128,7 +129,8 @@ def main(argv):
 
 	for arg in [5,7,9,11]:
 		matrix = T1.makeMatrix(arg)
-		collectData(matrix,argv[1],argv[2],'T5_RW')
+		collectData(matrix,argv[1],argv[2])
+		plt.show()
 
 
 # run main module if not imported

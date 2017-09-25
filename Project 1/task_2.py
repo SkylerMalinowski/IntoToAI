@@ -2,6 +2,7 @@
 # Skyler Malinowski [ som12 ]
 # Andrew Dos Reis [ ad1005 ]
 # Project 1
+# task_2.py
 # CS 440
 # **************************************************************************** #
 
@@ -50,6 +51,7 @@ def dumpFile(matrix,fileName='matrix'):
 
 	with open(fileName, 'r') as original: data = original.read()
 	with open(fileName, 'w') as modified: modified.write(str(len(matrix))+'\n' + data)
+
 
 class Queue():
 	def __init__(self):
@@ -155,7 +157,7 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 					RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
 					dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
 	else:
-		RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
+		RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'_k'+str(k)+'.png')
 		dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
 
 	return k

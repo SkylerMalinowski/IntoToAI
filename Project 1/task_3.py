@@ -2,6 +2,7 @@
 # Skyler Malinowski [ som12 ]
 # Andrew Dos Reis [ ad1005 ]
 # Project 1
+# task_3.py
 # CS 440
 # **************************************************************************** #
 
@@ -63,7 +64,7 @@ def evaluate(matrix,fileName='tree',row=0,col=0):
 
 
 # Task 3  **********************************************************************
-def hillClimb(matrix,fileName='task_3',row=0,col=0):
+def hillClimb(matrix,fileName='T3_HC',row=0,col=0):
 	n = len(matrix)
 	new_matrix = np.copy(matrix)
 
@@ -92,12 +93,9 @@ def hillClimb(matrix,fileName='task_3',row=0,col=0):
 		return matrix,k2,root2
 
 
-# Main  ************************************************************************
-def main(argv):
-	# argv[1] = number of iterations of hill climbing
-
-	fileName = 'T3_HC'
-	N = int(argv[1])
+def collectData(matrix,argv1,fileName='T3_HC'):
+	n = len(matrix)
+	N = int(argv1)
 
 	t = [0,0]
 	k = 0
@@ -109,50 +107,59 @@ def main(argv):
 	x = np.arange(N)
 	y = np.zeros(N,dtype=np.int)
 
-	for arg in [5,7,9,11]:
-		matrix = T1.makeMatrix(arg)
-		t[0] = time.time()
-		for i in range(N):
-			matrix,k,root = hillClimb(matrix,fileName+'_S'+str(arg))
-			if i == 0 or k > best_k:
-				best_k = k
-				best_root = root
-				best_matrix = matrix
-			y[i] = k
-		t[1] = time.time()
+	t[0] = time.time()
+	for i in range(N):
+		matrix,k,root = hillClimb(matrix,fileName+'_n'+str(n))
+		if i == 0 or k > best_k:
+			best_k = k
+			best_root = root
+			best_matrix = matrix
+		y[i] = k
+	t[1] = time.time()
 
-		plt.plot(x,y)
+	plt.plot(x,y)
 
-		#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-		sum = 0
-		fileRoot = fileName+'_n'+str(arg)+'_k'
+	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
+	sum = 0
+	fileRoot = fileName+'_n'+str(n)+'_k'
+	for file in os.listdir():
+		if file.find(fileRoot) is not -1:
+			sum += 1
+	if sum > 0:
 		for file in os.listdir():
 			if file.find(fileRoot) is not -1:
-				sum += 1
-		if sum > 0:
-			for file in os.listdir():
-				if file.find(fileRoot) is not -1:
-					file_k = file.split('_k',1)
-					file_k = file_k[1]
-					file_k = int(file_k[:-4])
-					if k > file_k:
-						os.remove(file)
-						RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
-						T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
-		else:
-			RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
-			T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
+				file_k = file.split('_k',1)
+				file_k = file_k[1]
+				file_k = int(file_k[:-4])
+				if k > file_k:
+					os.remove(file)
+					RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+					T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
+	else:
+		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
-		print('Final',arg,'by',arg,"Matrix:")
-		print(matrix)
-		print("Evaluation Function =",k)
-		print("Elapsed Computational Time =",t[1]-t[0],"sec")
+	print('Final',n,'by',n,"Matrix:")
+	print(matrix)
+	print("Evaluation Function =",k)
+	print("Elapsed Computational Time =",t[1]-t[0],"sec")
+	print('')
 
-	plt.legend(['5-by-5','7-by-7','9-by-9','11-by-11'])
+	plt.legend([str(n)+'-by-'+str(n)])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	plt.savefig(fileName+'_fig'+'.png')
-	plt.show()
+	plt.savefig('T3_HC_fig_n'+str(n)+'.png')
+	plt.draw()
+
+
+# Main  ************************************************************************
+def main(argv):
+	# argv[1] = number of iterations of hill climbing
+
+	for arg in [5,7,9,11]:
+		matrix = T1.makeMatrix(arg)
+		collectData(matrix,argv[1])
+		plt.show()
 
 
 # run main module if not imported
