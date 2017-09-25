@@ -13,7 +13,7 @@ import task_3 as T3
 import task_4 as T4
 import task_5 as T5
 # Sys and Opt for CLI arguments and flags
-import sys, getopt
+import sys, getopt, os
 # NumPy for math functions and data structures
 import numpy as np
 # Random for random numbers
@@ -113,8 +113,24 @@ def collectData(matrix,argv1,argv2,argv3,fileName='task_6'):
 	t[1] = time.time()
 
 	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
-	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
+	sum = 0
+	fileRoot = fileName+'_n'+str(n)+'_k'
+	for file in os.listdir():
+		if file.find(fileRoot) is not -1:
+			sum += 1
+	if sum > 0:
+		for file in os.listdir():
+			if file.find(fileRoot) is not -1:
+				file_k = file.split('_k',1)
+				file_k = file_k[1]
+				file_k = int(file_k[:-4])
+				if k > file_k:
+					os.remove(file)
+					RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+					T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
+	else:
+		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
+		T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
 
 	# debug
 	print('Hill Climb with Simulated Annealing - Final',str(n),'by',str(n),"Matrix:")

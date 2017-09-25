@@ -10,7 +10,7 @@
 import task_1 as T1
 import task_2 as T2
 # Sys and Opt for CLI arguments and flags
-import sys, getopt
+import sys, getopt, os
 # NumPy for math functions and data structures
 import numpy as np
 # Random for random numbers
@@ -146,8 +146,24 @@ def main(argv):
 		plt.plot(x,y)
 
 		#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-		RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
-		T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
+		sum = 0
+		fileRoot = fileName+'_n'+str(arg)+'_k'
+		for file in os.listdir():
+			if file.find(fileRoot) is not -1:
+				sum += 1
+		if sum > 0:
+			for file in os.listdir():
+				if file.find(fileRoot) is not -1:
+					file_k = file.split('_k',1)
+					file_k = file_k[1]
+					file_k = int(file_k[:-4])
+					if k > file_k:
+						os.remove(file)
+						RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
+						T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
+		else:
+			RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(arg)+'_k'+str(best_k)+'.png')
+			T2.dumpFile(best_matrix,fileName+'_n'+str(arg)+'_k'+str(best_k))
 
 		# debug
 		print('Final',arg,'by',arg,"Matrix:")

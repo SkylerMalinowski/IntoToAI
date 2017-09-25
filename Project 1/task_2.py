@@ -9,7 +9,7 @@
 # Import other Tasks
 import task_1 as T1
 # Sys and Opt for CLI arguments and flags
-import sys, getopt
+import sys, getopt, os
 # NumPy for math functions and data structures
 import numpy as np
 # Random for random numbers
@@ -147,8 +147,26 @@ def evaluate(matrix,fileName='task_2',row=0,col=0):
 	print('Value Function =',k)
 
 	#print(RenderTree(root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
-	dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
+	sum = 0
+	fileRoot = fileName+'_n'+str(n)+'_k'
+	for file in os.listdir():
+		if file.find(fileRoot) is not -1:
+			sum += 1
+	if sum > 0:
+		for file in os.listdir():
+			if file.find(fileRoot) is not -1:
+				file_k = file.split('_k',1)
+				file_k = file_k[1]
+				file_k = int(file_k[:-4])
+				if k > file_k:
+					os.remove(file)
+					RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
+					dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
+	else:
+		RenderTreeGraph(root).to_picture(fileName+'_n'+str(n)+'.png')
+		dumpFile(matrix,fileName+'_n'+str(n)+'_k'+str(k))
+
+
 
 	return k
 
