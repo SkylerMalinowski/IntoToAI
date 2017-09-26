@@ -122,7 +122,7 @@ def collectData(matrix,argv1,fileName='T3_HC'):
 
 	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
-	T8.saveBest(best_matrix,best_k,best_root,fileName)
+	#T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Final',n,'by',n,"Matrix:")
 	print(matrix)
@@ -133,7 +133,7 @@ def collectData(matrix,argv1,fileName='T3_HC'):
 	plt.legend([str(n)+'-by-'+str(n)])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	plt.savefig('T3_HC_fig_n'+str(n)+'.png')
+	#plt.savefig('T3_HC_fig_n'+str(n)+'.png')
 	plt.draw()
 
 

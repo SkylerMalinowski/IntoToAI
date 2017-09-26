@@ -57,12 +57,11 @@ def saveBest(matrix,k,root,fileRoot=''):
         fileName = 'n'+str(n)+'_k'+str(int(k))
     else:
         fileName = fileRoot+'_n'+str(n)+'_k'+str(int(k))
-
     if len(fileRoot) == 0:  # Unified file name
         fileList = [file for file in os.listdir() if ('.txt' in file or '.png' in file) and 'T' not in file and 'n'+str(n) in file and '_k' in file]
         if len(fileList) is 0:  # No files exist with that name
-            RenderTreeGraph(root).to_picture(fileName+'.png')
             T2.dumpFile(matrix,fileName)
+            #RenderTreeGraph(root).to_picture(fileName+'.png')
         else:  # Files exist with that name
             for file in fileList:
                 file_n = file.split('_',1)
@@ -73,13 +72,13 @@ def saveBest(matrix,k,root,fileRoot=''):
                 file_k = int(file_k[1:])
                 if n is file_n and k > file_k:
                     os.remove(file)
-                    RenderTreeGraph(root).to_picture(fileName+'.png')
                     T2.dumpFile(matrix,fileName)
+                    #RenderTreeGraph(root).to_picture(fileName+'.png')
     else:  # Task name system
         fileList = [file for file in os.listdir() if fileRoot in file and 'n'+str(n) in file and '_k' in file]
         if len(fileList) is 0:  # No files exist with that name
-            RenderTreeGraph(root).to_picture(fileName+'.png')
             T2.dumpFile(matrix,fileName)
+            #RenderTreeGraph(root).to_picture(fileName+'.png')
         else:  # Files exist with that name
             for file in fileList:
                 file_n = file.split('_',4)
@@ -90,8 +89,8 @@ def saveBest(matrix,k,root,fileRoot=''):
                 file_n = int(file_n[1:])
                 if k > file_k:
                     os.remove(file)
-                    RenderTreeGraph(root).to_picture(fileName+'.png')
                     T2.dumpFile(matrix,fileName)
+                    #RenderTreeGraph(root).to_picture(fileName+'.png')
 
 
 # Main  ************************************************************************
@@ -100,26 +99,45 @@ def main(argv):
     # argv[2] = iterations
 
     # Task 5 - RW
-    p = 0.2
+    p = 0.5
     # Task 6 - SA
-    temperature = 100
-    tmp_decay = 0.9
+    temperature = 1000
+    tmp_decay = 0.999
     # Task 7 - GA
 
-    best_file = getBest(int(argv[1]))
+    t = [0,0]
+    t[0] = time.time()
+    for i in range(int(argv[2])):
+        best_file = getBest(int(argv[1]))
+        if best_file[0] is not None:
+            matrix = T2.fileParse(best_file[0])
+        else:
+            matrix = T1.makeMatrix(int(argv[1]))
+        new_matrix = T1.makeMatrix(int(argv[1]))
+        new_k = T2.evaluate(new_matrix)
+        print(i,"Evaluation Function =",new_k)
+        if new_k >= best_file[2]:
+            saveBest(new_matrix,new_k,None)
+    '''
     if best_file[0] is not None:
         matrix = T2.fileParse(best_file[0])
     else:
         matrix = T1.makeMatrix(int(argv[1]))
+    '''
+    #best_file = getBest(int(argv[1]))
+    #T3.collectData(matrix,argv[2])
 
-    T3.collectData(matrix,argv[2])
     best_file = getBest(int(argv[1]))
     T5.collectData(matrix,argv[2],p)
-    best_file = getBest(int(argv[1]))
-    T6.collectData(matrix,argv[2],temperature,tmp_decay)
+
+    #best_file = getBest(int(argv[1]))
+    #T6.collectData(matrix,argv[2],temperature,tmp_decay)
+
     #best_file = getBest(int(argv[1]))
     #T7.collectData(matrix,argv[2])
 
+    t[1] = time.time()
+    print("Total Elapsed Computational Time =",t[1]-t[0],"sec")
 
 # run main module if not imported
 if __name__ == "__main__":

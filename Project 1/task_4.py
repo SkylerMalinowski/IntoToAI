@@ -65,7 +65,7 @@ def collectData(matrix,argv1,argv2,fileName='T4_RR'):
 
 	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
-	T8.saveBest(best_matrix,best_k,best_root,fileName)
+	#T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Hill Climb with Random Restarts - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
@@ -77,7 +77,7 @@ def collectData(matrix,argv1,argv2,fileName='T4_RR'):
 	plt.legend(['Hill Climb with Random Restarts'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
+	#plt.savefig(fileName+'_fig_n'+str(n)+'.png')
 	plt.draw()
 
 
