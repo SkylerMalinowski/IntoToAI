@@ -39,43 +39,86 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	n = len(population[0])
 	k = np.zeros(p)
 	root = [None]*p
+	best_k = 0
+	best_pop = None
+	best_root = None
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i],fileName)
-		if(k[i] < 0):
-			while(k[i]< 0):
-				population[i] = T1.makeMatrix(n)
-				k[i],root[i] = T3.evaluate(population[i],fileName)
-	t=int(sum(k))
+		# if(k[i] < 0):
+		# 	#print("shit puzzle detected ********************")
+		# 	k[i] = k[i]
+		while(k[i]< 0):
+			print("")
+			population[i] = T1.makeMatrix(n)
+			k[i],root[i] = T3.evaluate(population[i],fileName)
+		if(k[i] >= best_k):
+			best_k = k[i]
+			best_pop = population[i]
+	t = int(sum(k))
 	reproductive_strength = []
 	for l in range(p):
-		for z in range(int(k[l])):
-			reproductive_strength.append(l)
-
-	#print("population schema", reproductive_strength)
+			for z in range(int(k[l])):
+				reproductive_strength.append(l)
+	print("k map", k)
+	print("population schema", reproductive_strength)
 	#print("t",t)
-	survivor_values = random.sample(range(0, abs(t)), 2)
+	survivor_values = random.sample(range(0, t), 2)
 	#print(survivor_values)
 	survivor = [None,None]
 	#print(survivor)
 	survivor[0] = population[reproductive_strength[survivor_values[0]]]
 	survivor[1] = population[reproductive_strength[survivor_values[1]]]
-	#print("survivors", survivor)
+	print("survivors", survivor)
+	swapping_rows = [[0,0]]*s
+	print(swapping_rows)
+	for iter in range(s):
+		swapping_rows_1 = random.sample(range(0, n), 2)
+		while(swapping_rows_1[0] in swapping_rows[iter] or swapping_rows_1[1] in swapping_rows[iter]):
+			swapping_rows_1 = random.sample(range(0, n), 2)
+		swapping_rows[iter] = swapping_rows_1
 	for x in range(s):
-		swapping_rows = random.sample(range(0, n), 2)
-		if n-1 in swapping_rows:
-			for h in range(1,n-1):
-				survivor[0][swapping_rows[0]][h],survivor[1][swapping_rows[1]][h] = survivor[1][swapping_rows[1]][h],survivor[0][swapping_rows[0]][h]
+		side_of_swap = [random.randint(0,1),random.randint(0,1)]
+		print("swapping rows ", swapping_rows)
+		print("on sides", side_of_swap)
+		i = int((float(n)/2 - .5))
+		print(i)
+		if n-1 in swapping_rows[x]:
+			if side_of_swap[0] == side_of_swap[1] == 1:
+				#worry about goal
+				survivor[0][swapping_rows[x][0]][i+1:n-1],survivor[1][swapping_rows[x][1]][i+1:n-1] = survivor[1][swapping_rows[x][1]][i+1:n-1],survivor[0][swapping_rows[x][0]][i+1:n-1]
+			elif side_of_swap[0] == side_of_swap[1] == 0:
+				#dont worry about goal
+				survivor[0][0:i],survivor[1][0:i] = survivor[1][0:i],survivor[0][0:i]
+			else:
+				rev1,rev2 = survivor[1][swapping_rows[x][1]][::-1],survivor[0][swapping_rows[x][0]][::-1]
+				if(swapping_rows[1]==n-1):
+					survivor[0][swapping_rows[x][0]][0:i],survivor[1][swapping_rows[x][1]][i+1:n-1] = rev1[i+1:n],rev2[1:i]
+				else:
+					survivor[1][swapping_rows[x][1]][0:i],survivor[0][swapping_rows[x][0]][i+1:n-1] = rev2[i+1:n],rev1[1:i]
 		else:
-			survivor[0][swapping_rows[0]],survivor[1][swapping_rows[1]] = survivor[1][swapping_rows[1]],survivor[0][swapping_rows[0]]
+			if side_of_swap[0] == side_of_swap[1] == 1:
+				survivor[0][swapping_rows[x][0]][i+1:n],survivor[1][swapping_rows[x][1]][i+1:n] = survivor[1][swapping_rows[x][1]][i+1:n],survivor[0][swapping_rows[x][0]][i+1:n]
+			elif side_of_swap[0] == side_of_swap[1] == 0:
+				survivor[0][0:i],survivor[1][0:i] = survivor[1][0:i],survivor[0][0:i]
+			else:
+				rev1,rev2 = survivor[1][swapping_rows[x][1]][::-1],survivor[0][swapping_rows[x][0]][::-1]
+				#print(rev1,rev2)
+				survivor[0][swapping_rows[x][0]][0:i],survivor[1][swapping_rows[x][1]][i+1:n] = rev1[i+1:n],rev2[0:i]
+		survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
 	#print("survivors offspring",survivor)
 	population[0] = survivor[0]
 	population[1] = survivor[1]
-	population[2] = T1.makeMatrix(n)
-	for mut in population:
-		T5.hillClimb_random_walk(mut,1)
+	population[2] = best_pop
+	for i in range(p):
+		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
+		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
+		print(population[i])
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i])
-
+		# while(k[i]< 0):
+		# 	print(population[i],"died at birth")
+		# 	population[i] = T1.makeMatrix(n)
+		# 	k[i],root[i] = T3.evaluate(population[i],fileName)
 
 	# goal_row = n-1
 	# goal_col = n-1
@@ -119,14 +162,14 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 	T8.saveBest(best_matrix,best_k,best_root)
 	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
-	print('Hill Climb with population based approach - Final',str(n),'by',str(n),"Matrix:")
+	print('Population Based Approach - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
 	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
 	plt.title(str(n)+' by '+str(n))
-	plt.legend(['Hill Climb with population based approach'])
+	plt.legend(['Population Based Approach'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
 	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
