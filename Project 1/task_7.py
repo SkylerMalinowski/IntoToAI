@@ -69,50 +69,70 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	survivor[0] = population[reproductive_strength[survivor_values[0]]]
 	survivor[1] = population[reproductive_strength[survivor_values[1]]]
 	print("survivors", survivor)
-	swapping_rows = [[0,0]]*s
-	print(swapping_rows)
-	for iter in range(s):
-		swapping_rows_1 = random.sample(range(0, n), 2)
-		while(swapping_rows_1[0] in swapping_rows[iter] or swapping_rows_1[1] in swapping_rows[iter]):
-			swapping_rows_1 = random.sample(range(0, n), 2)
-		swapping_rows[iter] = swapping_rows_1
+
+	# for iter in range(s):
+	# 	swapping_rows_1 = random.randint(0,n)
+	# 	while(swapping_rows_1 in swapping_rows):
+	# 		swapping_rows_1 = random.randint(0,n)
+	# 	swapping_rows[iter] = swapping_rows_1
 	for x in range(s):
-		side_of_swap = [random.randint(0,1),random.randint(0,1)]
-		print("swapping rows ", swapping_rows)
+		swapping_row = random.randint(0,n-1)
+		side_of_swap = random.randint(0,1)
+		print("swapping row ", swapping_row)
 		print("on sides", side_of_swap)
 		i = int((float(n)/2 - .5))
 		print(i)
-		if n-1 in swapping_rows[x]:
-			if side_of_swap[0] == side_of_swap[1] == 1:
+		if n-1 == swapping_row:
+			if side_of_swap == 1:
 				#worry about goal
-				survivor[0][swapping_rows[x][0]][i+1:n-1],survivor[1][swapping_rows[x][1]][i+1:n-1] = survivor[1][swapping_rows[x][1]][i+1:n-1],survivor[0][swapping_rows[x][0]][i+1:n-1]
-			elif side_of_swap[0] == side_of_swap[1] == 0:
+				survivor[0][swapping_row][i+1:n-1],survivor[1][swapping_row][i+1:n-1] = survivor[1][swapping_row][i+1:n-1],survivor[0][swapping_row][i+1:n-1]
+			else:
 				#dont worry about goal
-				survivor[0][0:i],survivor[1][0:i] = survivor[1][0:i],survivor[0][0:i]
-			else:
-				rev1,rev2 = survivor[1][swapping_rows[x][1]][::-1],survivor[0][swapping_rows[x][0]][::-1]
-				if(swapping_rows[1]==n-1):
-					survivor[0][swapping_rows[x][0]][0:i],survivor[1][swapping_rows[x][1]][i+1:n-1] = rev1[i+1:n],rev2[1:i]
-				else:
-					survivor[1][swapping_rows[x][1]][0:i],survivor[0][swapping_rows[x][0]][i+1:n-1] = rev2[i+1:n],rev1[1:i]
+				survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
 		else:
-			if side_of_swap[0] == side_of_swap[1] == 1:
-				survivor[0][swapping_rows[x][0]][i+1:n],survivor[1][swapping_rows[x][1]][i+1:n] = survivor[1][swapping_rows[x][1]][i+1:n],survivor[0][swapping_rows[x][0]][i+1:n]
-			elif side_of_swap[0] == side_of_swap[1] == 0:
-				survivor[0][0:i],survivor[1][0:i] = survivor[1][0:i],survivor[0][0:i]
+			if side_of_swap == 1:
+				survivor[0][swapping_row][i+1:n],survivor[1][swapping_row][i+1:n] = survivor[1][swapping_row][i+1:n],survivor[0][swapping_row][i+1:n]
 			else:
-				rev1,rev2 = survivor[1][swapping_rows[x][1]][::-1],survivor[0][swapping_rows[x][0]][::-1]
-				#print(rev1,rev2)
-				survivor[0][swapping_rows[x][0]][0:i],survivor[1][swapping_rows[x][1]][i+1:n] = rev1[i+1:n],rev2[0:i]
-		survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
+				survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
+
+		#survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
+	# for x in range(s):
+	# 	side_of_swap = [random.randint(0,1),random.randint(0,1)]
+	# 	print("swapping row ", swapping_row)
+	# 	print("on sides", side_of_swap)
+	# 	i = int((float(n)/2 - .5))
+	# 	print(i)
+	# 	if n-1 == swapping_row:
+	# 		if side_of_swap[0] == side_of_swap[1] == 1:
+	# 			#worry about goal
+	# 			survivor[0][swapping_row][i+1:n-1],survivor[1][swapping_row][i+1:n-1] = survivor[1][swapping_row][i+1:n-1],survivor[0][swapping_row][i+1:n-1]
+	# 		elif side_of_swap[0] == side_of_swap[1] == 0:
+	# 			#dont worry about goal
+	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
+	# 		else:
+	# 			rev1,rev2 = survivor[1][swapping_row][::-1],survivor[0][swapping_row][::-1]
+	# 			if(swapping_rows[1]==n-1):
+	# 				survivor[0][swapping_row][0:i],survivor[1][swapping_row][i+1:n-1] = rev1[i+1:n],rev2[1:i]
+	# 			else:
+	# 				survivor[1][swapping_row][0:i],survivor[0][swapping_row][i+1:n-1] = rev2[i+1:n],rev1[1:i]
+	# 	else:
+	# 		if side_of_swap[0] == side_of_swap[1] == 1:
+	# 			survivor[0][swapping_row][i+1:n],survivor[1][swapping_row][i+1:n] = survivor[1][swapping_row][i+1:n],survivor[0][swapping_row][i+1:n]
+	# 		elif side_of_swap[0] == side_of_swap[1] == 0:
+	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
+	# 		else:
+	# 			rev1,rev2 = survivor[1][swapping_row][::-1],survivor[0][swapping_row][::-1]
+	# 			#print(rev1,rev2)
+	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][i+1:n] = rev1[i+1:n],rev2[0:i]
+	# 	#survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
 	#print("survivors offspring",survivor)
 	population[0] = survivor[0]
 	population[1] = survivor[1]
 	population[2] = best_pop
-	for i in range(p):
-		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
-		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
-		print(population[i])
+	# for i in range(p):
+	# 	print("before mutation",population[i])
+	# 	population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],.99)
+	# 	print("after mutation", population[i])
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i])
 		# while(k[i]< 0):
