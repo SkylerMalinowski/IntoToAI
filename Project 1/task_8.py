@@ -54,9 +54,9 @@ def getBest(n):
 def saveBest(matrix,k,root,fileRoot=''):
     n = len(matrix)
     if fileRoot is '':
-        fileName = 'n'+str(n)+'_k'+str(k)
+        fileName = 'n'+str(n)+'_k'+str(int(k))
     else:
-        fileName = fileRoot+'_n'+str(n)+'_k'+str(k)
+        fileName = fileRoot+'_n'+str(n)+'_k'+str(int(k))
 
     if len(fileRoot) == 0:  # Unified file name
         fileList = [file for file in os.listdir() if ('.txt' in file or '.png' in file) and 'T' not in file and 'n'+str(n) in file and '_k' in file]

@@ -12,8 +12,9 @@ import task_2 as T2
 import task_3 as T3
 import task_4 as T4
 import task_5 as T5
+import task_8 as T8
 # Sys and Opt for CLI arguments and flags
-import sys, getopt
+import sys, getopt, os
 # NumPy for math functions and data structures
 import numpy as np
 # Random for random numbers
@@ -31,7 +32,7 @@ import time
 
 
 # Task 6 ***********************************************************************
-def genetic_step(population,s,fileName='task_7',row=0,col=0):
+def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	#for y in population:
 		#print(y)
 	p = len(population)
@@ -80,16 +81,14 @@ def genetic_step(population,s,fileName='task_7',row=0,col=0):
 	# goal_col = n-1
 	return population,k,root
 
-def collectData(population,argv1,argv2,fileName='task_7'):
+def collectData(population,argv1,argv2,fileName='T7_GA'):
 	n = len(population[0])
 	p = len(population)
 	N = int(argv1)
 	s = int(argv2)
 
 	t = [0,0]
-
 	k = np.zeros(p)
-	#matrix = np.copy(matrix)
 
 	best_k = 0
 	best_root = Node('None')
@@ -116,18 +115,16 @@ def collectData(population,argv1,argv2,fileName='task_7'):
 	plt.plot(x,y)
 	t[1] = time.time()
 
-	#print(RenderTree(best_root, style=AsciiStyle()).by_attr())
-	RenderTreeGraph(best_root).to_picture(fileName+'_n'+str(n)+'_k'+str(best_k)+'.png')
-	T2.dumpFile(best_matrix,fileName+'_n'+str(n)+'_k'+str(best_k))
+	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
+	T8.saveBest(best_matrix,best_k,best_root)
+	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
-	# debug
 	print('Hill Climb with population based approach - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
 	print("Evaluation Function =",best_k)
 	print("Elapsed Computational Time =",t[1]-t[0],"sec")
 	print('')
 
-	# debug
 	plt.title(str(n)+' by '+str(n))
 	plt.legend(['Hill Climb with population based approach'])
 	plt.xlabel('Iteration (i)')
@@ -147,7 +144,8 @@ def main(argv):
 		for p in range(int(argv[3])):
 			matrix = T1.makeMatrix(arg)
 			population.append(matrix)
-		collectData(population,argv[1],argv[2],'T7_PA')
+		collectData(population,argv[1],argv[2])
+
 
 # run main module if not imported
 if __name__ == "__main__":
