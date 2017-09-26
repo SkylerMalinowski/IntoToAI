@@ -22,8 +22,8 @@ def makeMatrix(size):
 
 	for row in range(n):
 		for col in range(n):
-			Max = max(n-1-row,row-n-1,n-1-col,col-n-1)
-			if Max == 0:
+			Max = max(n-1-row,row,n-1-col,col)
+			if row == col == n-1:
 				matrix[row,col] = 0
 			else:
 				matrix[row,col] = random.randint(1,Max)

@@ -47,7 +47,7 @@ def hillClimb_simulated_annealing(matrix,T,fileName='task_6',row=0,col=0):
 		rand_row = random.randint(0,n-1)
 		rand_col = random.randint(0,n-1)
 
-	Max = max(abs(n-1-rand_row),abs(rand_row-n-1),abs(n-1-rand_col),abs(rand_col-n-1))
+	Max = max(n-1-row,row,n-1-col,col)
 
 	old_val = matrix[rand_row,rand_col]
 	while( new_matrix[rand_row,rand_col] == old_val):
