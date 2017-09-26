@@ -180,7 +180,7 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 
 	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
-	T8.saveBest(best_matrix,best_k,best_root,fileName)
+	#T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Population Based Approach - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
