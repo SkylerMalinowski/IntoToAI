@@ -95,7 +95,7 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 			else:
 				survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
 
-		#survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
+		survivor[0][swapping_row][i],survivor[1][swapping_row][i] = survivor[1][swapping_row][i],survivor[0][swapping_row][i]
 	# for x in range(s):
 	# 	side_of_swap = [random.randint(0,1),random.randint(0,1)]
 	# 	print("swapping row ", swapping_row)
@@ -129,10 +129,10 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	population[0] = survivor[0]
 	population[1] = survivor[1]
 	population[2] = best_pop
-	# for i in range(p):
-	# 	print("before mutation",population[i])
-	# 	population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],.99)
-	# 	print("after mutation", population[i])
+	for i in range(p):
+		print("before mutation",population[i])
+		#population[i],k[i],root[i] = T3.hillClimb(population[i])
+		print("after mutation", population[i])
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i])
 		# while(k[i]< 0):
@@ -180,7 +180,7 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 
 	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
-	#T8.saveBest(best_matrix,best_k,best_root,fileName)
+	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Population Based Approach - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
