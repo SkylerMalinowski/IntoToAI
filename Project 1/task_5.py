@@ -91,7 +91,7 @@ def collectData(matrix,argv1,argv2,fileName='T5_RW'):
 
 	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
-	#T8.saveBest(best_matrix,best_k,best_root,fileName)
+	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
 	print('Hill Climb with Random Walk - Final',str(n),'by',str(n),"Matrix:")
 	print(best_matrix)
@@ -103,7 +103,7 @@ def collectData(matrix,argv1,argv2,fileName='T5_RW'):
 	plt.legend(['Hill Climb with Random Walk'])
 	plt.xlabel('Iteration (i)')
 	plt.ylabel('Evaluation Function Value (k)')
-	#plt.savefig(fileName+'_fig_n'+str(n)+'.png')
+	plt.savefig(fileName+'_fig_n'+str(n)+'.png')
 	plt.draw()
 
 

@@ -143,7 +143,7 @@ def evaluate(matrix,fileName='T2_EM',row=0,col=0):
 
 	#print(RenderTree(root,style=AsciiStyle()).by_attr())
 	T8.saveBest(matrix,k,root)
-	#T8.saveBest(matrix,k,root,fileName)
+	T8.saveBest(matrix,k,root,fileName)
 
 	return k
 
