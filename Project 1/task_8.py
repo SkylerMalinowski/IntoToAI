@@ -61,7 +61,7 @@ def saveBest(matrix,k,root,fileRoot=''):
         fileList = [file for file in os.listdir() if ('.txt' in file or '.png' in file) and 'T' not in file and 'n'+str(n) in file and '_k' in file]
         if len(fileList) is 0:  # No files exist with that name
             T2.dumpFile(matrix,fileName)
-            #RenderTreeGraph(root).to_picture(fileName+'.png')
+            RenderTreeGraph(root).to_picture(fileName+'.png')
         else:  # Files exist with that name
             for file in fileList:
                 file_n = file.split('_',1)
@@ -73,12 +73,12 @@ def saveBest(matrix,k,root,fileRoot=''):
                 if n is file_n and k > file_k:
                     os.remove(file)
                     T2.dumpFile(matrix,fileName)
-                    #RenderTreeGraph(root).to_picture(fileName+'.png')
+                    RenderTreeGraph(root).to_picture(fileName+'.png')
     else:  # Task name system
         fileList = [file for file in os.listdir() if fileRoot in file and 'n'+str(n) in file and '_k' in file]
         if len(fileList) is 0:  # No files exist with that name
             T2.dumpFile(matrix,fileName)
-            #RenderTreeGraph(root).to_picture(fileName+'.png')
+            RenderTreeGraph(root).to_picture(fileName+'.png')
         else:  # Files exist with that name
             for file in fileList:
                 file_n = file.split('_',4)
@@ -90,7 +90,7 @@ def saveBest(matrix,k,root,fileRoot=''):
                 if k > file_k:
                     os.remove(file)
                     T2.dumpFile(matrix,fileName)
-                    #RenderTreeGraph(root).to_picture(fileName+'.png')
+                    RenderTreeGraph(root).to_picture(fileName+'.png')
 
 
 # Main  ************************************************************************
