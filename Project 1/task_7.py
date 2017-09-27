@@ -39,21 +39,14 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	n = len(population[0])
 	k = np.zeros(p)
 	root = [None]*p
-	best_k = 0
-	best_pop = None
-	best_root = None
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i],fileName)
 		# if(k[i] < 0):
 		# 	#print("shit puzzle detected ********************")
 		# 	k[i] = k[i]
 		while(k[i]< 0):
-			print("")
 			population[i] = T1.makeMatrix(n)
 			k[i],root[i] = T3.evaluate(population[i],fileName)
-		if(k[i] >= best_k):
-			best_k = k[i]
-			best_pop = population[i]
 	t = int(sum(k))
 	reproductive_strength = []
 	for l in range(p):
@@ -68,18 +61,10 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	#print(survivor)
 	survivor[0] = population[reproductive_strength[survivor_values[0]]]
 	survivor[1] = population[reproductive_strength[survivor_values[1]]]
-	print("survivors", survivor)
 
-	# for iter in range(s):
-	# 	swapping_rows_1 = random.randint(0,n)
-	# 	while(swapping_rows_1 in swapping_rows):
-	# 		swapping_rows_1 = random.randint(0,n)
-	# 	swapping_rows[iter] = swapping_rows_1
 	for x in range(s):
 		swapping_row = random.randint(0,n-1)
 		side_of_swap = random.randint(0,1)
-		print("swapping row ", swapping_row)
-		print("on sides", side_of_swap)
 		i = int((float(n)/2 - .5))
 		print(i)
 		if n-1 == swapping_row:
@@ -96,52 +81,16 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 				survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
 
 		survivor[0][swapping_row][i],survivor[1][swapping_row][i] = survivor[1][swapping_row][i],survivor[0][swapping_row][i]
-	# for x in range(s):
-	# 	side_of_swap = [random.randint(0,1),random.randint(0,1)]
-	# 	print("swapping row ", swapping_row)
-	# 	print("on sides", side_of_swap)
-	# 	i = int((float(n)/2 - .5))
-	# 	print(i)
-	# 	if n-1 == swapping_row:
-	# 		if side_of_swap[0] == side_of_swap[1] == 1:
-	# 			#worry about goal
-	# 			survivor[0][swapping_row][i+1:n-1],survivor[1][swapping_row][i+1:n-1] = survivor[1][swapping_row][i+1:n-1],survivor[0][swapping_row][i+1:n-1]
-	# 		elif side_of_swap[0] == side_of_swap[1] == 0:
-	# 			#dont worry about goal
-	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
-	# 		else:
-	# 			rev1,rev2 = survivor[1][swapping_row][::-1],survivor[0][swapping_row][::-1]
-	# 			if(swapping_rows[1]==n-1):
-	# 				survivor[0][swapping_row][0:i],survivor[1][swapping_row][i+1:n-1] = rev1[i+1:n],rev2[1:i]
-	# 			else:
-	# 				survivor[1][swapping_row][0:i],survivor[0][swapping_row][i+1:n-1] = rev2[i+1:n],rev1[1:i]
-	# 	else:
-	# 		if side_of_swap[0] == side_of_swap[1] == 1:
-	# 			survivor[0][swapping_row][i+1:n],survivor[1][swapping_row][i+1:n] = survivor[1][swapping_row][i+1:n],survivor[0][swapping_row][i+1:n]
-	# 		elif side_of_swap[0] == side_of_swap[1] == 0:
-	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
-	# 		else:
-	# 			rev1,rev2 = survivor[1][swapping_row][::-1],survivor[0][swapping_row][::-1]
-	# 			#print(rev1,rev2)
-	# 			survivor[0][swapping_row][0:i],survivor[1][swapping_row][i+1:n] = rev1[i+1:n],rev2[0:i]
-	# 	#survivor[0][i],survivor[1][i] = survivor[1][i],survivor[0][i]
-	#print("survivors offspring",survivor)
+	#
 	population[0] = survivor[0]
 	population[1] = survivor[1]
-	population[2] = best_pop
+	population[2] = T1.makeMatrix(n)
 	for i in range(p):
-		print("before mutation",population[i])
-		#population[i],k[i],root[i] = T3.hillClimb(population[i])
-		print("after mutation", population[i])
+		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
+		population[i],k[i],root[i] = T5.hillClimb_random_walk(population[i],1)
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i])
-		# while(k[i]< 0):
-		# 	print(population[i],"died at birth")
-		# 	population[i] = T1.makeMatrix(n)
-		# 	k[i],root[i] = T3.evaluate(population[i],fileName)
 
-	# goal_row = n-1
-	# goal_col = n-1
 	return population,k,root
 
 def collectData(population,argv1,argv2,fileName='T7_GA'):
@@ -178,7 +127,6 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 	plt.plot(x,y)
 	t[1] = time.time()
 
-	#print(RenderTree(best_root,style=AsciiStyle()).by_attr())
 	T8.saveBest(best_matrix,best_k,best_root)
 	T8.saveBest(best_matrix,best_k,best_root,fileName)
 
@@ -200,11 +148,10 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 def main(argv):
 	# argv[1] = number of iterations
 	# argv[2] = number of chromesomes swapped per genetic step
-    # argv[3] = population size
 
 	for arg in [5,7,9,11]:
 		population = []
-		for p in range(int(argv[3])):
+		for p in range(3):
 			matrix = T1.makeMatrix(arg)
 			population.append(matrix)
 		collectData(population,argv[1],argv[2])
