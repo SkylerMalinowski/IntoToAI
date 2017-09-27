@@ -79,7 +79,7 @@ def hillClimb(matrix,fileName='T3_HC',row=0,col=0):
 		rand_row = random.randint(0,n-1)
 		rand_col = random.randint(0,n-1)
 
-	Max = max(n-1-row,row,n-1-col,col)
+	Max = max(n-1-rand_row,rand_row,n-1-rand_col,rand_col)
 
 	old_val = matrix[rand_row,rand_col]
 	while( new_matrix[rand_row,rand_col] == old_val):
