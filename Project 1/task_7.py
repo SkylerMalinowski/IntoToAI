@@ -41,9 +41,7 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	root = [None]*p
 	for i in range(p):
 		k[i],root[i] = T3.evaluate(population[i],fileName)
-		# if(k[i] < 0):
-		# 	#print("shit puzzle detected ********************")
-		# 	k[i] = k[i]
+
 		while(k[i]< 0):
 			population[i] = T1.makeMatrix(n)
 			k[i],root[i] = T3.evaluate(population[i],fileName)
@@ -52,13 +50,8 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 	for l in range(p):
 			for z in range(int(k[l])):
 				reproductive_strength.append(l)
-	print("k map", k)
-	print("population schema", reproductive_strength)
-	#print("t",t)
 	survivor_values = random.sample(range(0, t), 2)
-	#print(survivor_values)
 	survivor = [None,None]
-	#print(survivor)
 	survivor[0] = population[reproductive_strength[survivor_values[0]]]
 	survivor[1] = population[reproductive_strength[survivor_values[1]]]
 
@@ -66,7 +59,6 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 		swapping_row = random.randint(0,n-1)
 		side_of_swap = random.randint(0,1)
 		i = int((float(n)/2 - .5))
-		print(i)
 		if n-1 == swapping_row:
 			if side_of_swap == 1:
 				#worry about goal
@@ -81,7 +73,7 @@ def genetic_step(population,s,fileName='T7_GA',row=0,col=0):
 				survivor[0][swapping_row][0:i],survivor[1][swapping_row][0:i] = survivor[1][swapping_row][0:i],survivor[0][swapping_row][0:i]
 
 		survivor[0][swapping_row][i],survivor[1][swapping_row][i] = survivor[1][swapping_row][i],survivor[0][swapping_row][i]
-	#
+
 	population[0] = survivor[0]
 	population[1] = survivor[1]
 	population[2] = T1.makeMatrix(n)
@@ -123,7 +115,7 @@ def collectData(population,argv1,argv2,fileName='T7_GA'):
 				best_k = k[j]
 				best_root = root[j]
 				best_matrix = population[j]
-			y[i] = k[j]
+		y[i] = max(k)
 	plt.plot(x,y)
 	t[1] = time.time()
 
