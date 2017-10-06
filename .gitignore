@@ -4,3 +4,7 @@
 *.txt
 
 Project 1/__pycache__/
+
+Project 2/__pycache__/
+
+*.pyc
