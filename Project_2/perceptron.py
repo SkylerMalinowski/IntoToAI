@@ -1,5 +1,6 @@
 # perceptron.py
 # -------------
+from operator import itemgetter
 
 # Perceptron implementation
 import util
@@ -42,8 +43,11 @@ class PerceptronClassifier:
 		for iteration in range(self.max_iterations):
 			print "Starting iteration ", iteration, "..."
 			for i in range(len(trainingData)):
-				"*** YOUR CODE HERE ***"
-			 	"*** YOUR CODE HERE ***"
+
+				"*v* YOUR CODE HERE *v*"
+
+			 	"*^* YOUR CODE HERE *^*"
+
 				util.raiseNotDefined()
 
 	def classify(self, data ):
@@ -68,14 +72,11 @@ class PerceptronClassifier:
 		"""
 		featuresWeights = []
 
-		"*** YOUR CODE HERE ***"
-		high = [k == 2 for k in weights[label]]
-		low = [k == 1 for k in weights[label]]
-		temp = high.append(low)
-		while len(featuresWeights) is not 100 and len(temp) is not 0:
-				featuresWeights.append(temp.pop(0))
-		"*** YOUR CODE HERE ***"
+		"*v* YOUR CODE HERE *v*"
+		featuresWeights = [[i,w] for i in self.weights[label]]
+		sorted(featuresWeights,key=itemgetter(1))
+		"*^* YOUR CODE HERE *^*"
 
 		util.raiseNotDefined()
 
-		return featuresWeights
+		return featuresWeights[0:100]
