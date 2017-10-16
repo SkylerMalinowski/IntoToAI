@@ -37,20 +37,22 @@ class PerceptronClassifier:
 		(and thus represents a vector a values).
 		"""
 
-		self.features = trainingData[0].keys() # could be useful later
+		#self.features = trainingData[0].keys() # could be useful later
 		# DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING
 
 		for iteration in range(self.max_iterations):
 			print "Starting iteration ", iteration, "..."
 			for i in range(len(trainingData)):
+				guess = self.classify([trainingData[i]])
+				guess = guess[0]
+				if guess is not trainingLabels[i]:
+					if len(self.weights[trainingLabels[i]]) == 0:  # Initialize Weights
+						self.weights[trainingLabels[i]] = util.Counter(trainingData[i])
+					else:  # Update Weights
+						self.weights[trainingLabels[i]] += trainingData[i]
+						self.weights[guess] -= trainingData[i]
 
-				"*v* YOUR CODE HERE *v*"
-
-			 	"*^* YOUR CODE HERE *^*"
-
-				util.raiseNotDefined()
-
-	def classify(self, data ):
+	def classify(self, data):
 		"""
 		Classifies each datum as the label that most closely matches the prototype vector
 		for that label.	See the project description for details.
@@ -65,18 +67,14 @@ class PerceptronClassifier:
 			guesses.append(vectors.argMax())
 		return guesses
 
-
 	def findHighWeightFeatures(self, label):
 		"""
 		Returns a list of the 100 features with the greatest weight for some label
 		"""
 		featuresWeights = []
 
-		"*v* YOUR CODE HERE *v*"
-		featuresWeights = [[i,w] for i in self.weights[label]]
-		sorted(featuresWeights,key=itemgetter(1))
-		"*^* YOUR CODE HERE *^*"
+		"*** YOUR CODE HERE ***"
 
 		util.raiseNotDefined()
 
-		return featuresWeights[0:100]
+		return featuresWeights
