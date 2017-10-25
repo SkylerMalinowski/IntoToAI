@@ -43,8 +43,7 @@ class PerceptronClassifier:
 		for iteration in range(self.max_iterations):
 			print "Starting iteration", iteration, "..."
 			for i in range(len(trainingData)):
-				guess = self.classify([trainingData[i]])
-				guess = guess[0]
+				guess = self.classify([trainingData[i]])[0]
 				if guess is not trainingLabels[i]:  # Was Classification Correct?
 					if len(self.weights[trainingLabels[i]]) == 0:  # Initialize Weights
 						self.weights[trainingLabels[i]] = util.Counter(trainingData[i])
