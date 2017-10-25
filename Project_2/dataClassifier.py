@@ -9,10 +9,13 @@ import samples
 import sys
 import util
 
+import matplotlib.pyplot as plt
+import numpy as np
+
 TRAINING_SET_SIZE = 5000
 TEST_SET_SIZE = 1000
-DIGIT_DATUM_WIDTH=28
-DIGIT_DATUM_HEIGHT=28
+DIGIT_DATUM_WIDTH = 28
+DIGIT_DATUM_HEIGHT = 28
 
 def basicFeatureExtractorDigit(datum):
 	"""
@@ -176,29 +179,63 @@ def runClassifier(args, options):
 	testLabels = samples.loadLabelsFile("data/digitdata/testlabels", numTest)
 
 	# Extract features
-	print "Extracting features..."
+	print "Extracting features ..."
 	trainingData = map(featureFunction, rawTrainingData)
 	validationData = map(featureFunction, rawValidationData)
 	testData = map(featureFunction, rawTestData)
 
-	# Conduct training and testing
-	print "Training..."
-	classifier.train(trainingData, trainingLabels, validationData, validationLabels)
-	print "Validating..."
-	guesses = classifier.classify(validationData)
-	correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
-	print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
-	print "Testing..."
-	guesses = classifier.classify(testData)
-	correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
-	print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-	analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
+	# Validation
+	X1 = []
+	Y1 = []
 
-	if((options.weights) & (options.classifier == "perceptron")):
-		for l in classifier.legalLabels:
-			features_weights = classifier.findHighWeightFeatures(l)
-			print ("=== Features with high weight for label %d ==="%l)
-			printImage(features_weights)
+	# Testing
+	X2 = []
+	Y2 = []
+
+	for coef in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]:
+
+		# Conduct training and testing
+		print "Training on",int(coef*len(trainingData)),"..."
+		classifier.train(trainingData[0:int(coef*len(trainingData))], trainingLabels[0:int(coef*len(trainingLabels))], validationData, validationLabels)
+
+		print "Validating ..."
+		guesses = classifier.classify(validationData)
+		correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
+		print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
+		X1.append(int(coef*len(trainingData)))
+		percentage = float(100.0 * (float(correct) / float(len(validationLabels))))
+		Y1.append(percentage)
+
+		print "Testing ..."
+		guesses = classifier.classify(testData)
+		correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
+		print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
+		X2.append(int(coef*len(trainingData)))
+		percentage = float(100.0 * (float(correct) / float(len(testLabels))))
+		Y2.append(percentage)
+		analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
+
+		if((options.weights) & (options.classifier == "perceptron")):
+			for l in classifier.legalLabels:
+				features_weights = classifier.findHighWeightFeatures(l)
+				print ("=== Features with high weight for label %d ==="%l)
+				printImage(features_weights)
+
+	XP = np.linspace(0, len(trainingData), 5000)
+	P1 = np.poly1d(np.polyfit(X1,Y1,2))
+	print 'coef of validationData:', np.polyfit(X1,Y1,2)
+	P2 = np.poly1d(np.polyfit(X2,Y2,2))
+	print 'coef of testData:', np.polyfit(X2,Y2,2)
+
+	plt.plot(X1,Y1,'ro')
+	plt.plot(XP,P1(XP),'r-',label="validationData")
+	plt.plot(X2,Y2,'bo')
+	plt.plot(XP,P2(XP),'b-',label="testData")
+
+	plt.xlabel('Training Data Size (n)')
+	plt.ylabel('Accuracy (%)')
+	plt.legend()
+	plt.show()
 
 if __name__ == '__main__':
 	# Read input

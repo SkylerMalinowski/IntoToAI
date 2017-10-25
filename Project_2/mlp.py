@@ -23,7 +23,6 @@ import tensorflow as tf
 
 PRINT = True
 
-
 class MLPClassifier:
 	"""
 	mlp classifier
@@ -37,7 +36,6 @@ class MLPClassifier:
 		self.b = tf.Variable(tf.zeros([10]))
 		#self.y = tf.matmul(self.x, self.W) + self.b
 		self.y_ = tf.placeholder(tf.float32, [None, 10])
-
 
 		self.W_conv1 = self.weight_variable([5, 5, 1, 32])
 		self.b_conv1 = self.bias_variable([32])
@@ -66,15 +64,15 @@ class MLPClassifier:
 
 		self.cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.y_, logits=self.y_conv))
 		self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.cross_entropy)
+		#self.train_step = tf.train.GradientDescentOptimizer(0.5).minimize(self.cross_entropy)
 		self.correct_prediction = tf.equal(tf.argmax(self.y_conv, 1), tf.argmax(self.y_, 1))
 		self.accuracy = tf.reduce_mean(tf.cast(self.correct_prediction, tf.float32))
 
-		self.sess  = tf.InteractiveSession()
+		self.sess = tf.InteractiveSession()
 		self.sess.run(tf.global_variables_initializer())
-		#self.train_step = tf.train.GradientDescentOptimizer(0.5).minimize(self.cross_entropy)
 		#self.sess = tf.InteractiveSession()
 
-	def train(self, trainingData, trainingLabels, validationData, validationLabels ):
+	def train(self, trainingData, trainingLabels, validationData, validationLabels):
 		input_set = self.convertInputs(trainingData)
 		output_set = self.convertOutputs(trainingLabels)
 		validationData_set = self.convertInputs(validationData)
@@ -84,8 +82,7 @@ class MLPClassifier:
 			self.sess.run(self.train_step, feed_dict={self.x: input_set, self.y_: output_set, self.keep_prob: 0.5})
 		correct_prediction = tf.equal(tf.argmax(self.y_conv, 1), tf.argmax(self.y_, 1))
 		accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-		print('test accuracy', self.sess.run(accuracy, feed_dict={self.x:validationData_set, self.y_:validationLabels_set, self.keep_prob: 1.0}))
-
+		#print('test accuracy', self.sess.run(accuracy, feed_dict={self.x:validationData_set, self.y_:validationLabels_set, self.keep_prob: 1.0}))
 
 	def convertInputs(self, input_data):
 		input_set = []
@@ -110,16 +107,16 @@ class MLPClassifier:
 		#print(self.sess.run(guess,feed_dict={self.x:input_set}))
 		return self.sess.run(guess,feed_dict={self.x:input_set, self.keep_prob: 1.0})
 
-	def weight_variable(self,shape):
+	def weight_variable(self, shape):
 		initial = tf.truncated_normal(shape, stddev=0.1)
 		return tf.Variable(initial)
 
-	def bias_variable(self,shape):
+	def bias_variable(self, shape):
 		initial = tf.constant(0.1, shape=shape)
 		return tf.Variable(initial)
 
-	def conv2d(self,x, W):
+	def conv2d(self, x, W):
 		return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
-	def max_pool_2x2(self,x):
+	def max_pool_2x2(self, x):
 		return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],strides=[1, 2, 2, 1], padding='SAME')
