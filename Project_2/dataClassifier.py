@@ -192,17 +192,12 @@ def runClassifier(args, options):
 	guesses = classifier.classify(validationData)
 	correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
 	print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
-	X1.append(int(coef*len(trainingData)))
-	percentage = float(100.0 * (float(correct) / float(len(validationLabels))))
-	Y1.append(percentage)
 
 	print "Testing ..."
 	guesses = classifier.classify(testData)
 	correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
 	print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-	X2.append(int(coef*len(trainingData)))
-	percentage = float(100.0 * (float(correct) / float(len(testLabels))))
-	Y2.append(percentage)
+
 	analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 
 	if((options.weights) & (options.classifier == "perceptron")):
