@@ -57,43 +57,43 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 	# Put any code here...
 	# Example of use:
 	for i in range(len(guesses)):
-			prediction = guesses[i]
-			truth = testLabels[i]
-			if (prediction != truth):
-				print "==================================="
-				print "Mistake on example %d" % i
-				print "Predicted %d; truth is %d" % (prediction, truth)
-				print "Image: "
-				print rawTestData[i]
-				break
+		prediction = guesses[i]
+		truth = testLabels[i]
+		if (prediction != truth):
+			print "==================================="
+			print "Mistake on example %d" % i
+			print "Predicted %d; truth is %d" % (prediction, truth)
+			print "Image: "
+			print rawTestData[i]
+			break
 
 class ImagePrinter:
-		def __init__(self, width, height):
-			self.width = width
-			self.height = height
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
 
-		def printImage(self, pixels):
-			"""
-			Prints a Datum object that contains all pixels in the
-			provided list of pixels.	This will serve as a helper function
-			to the analysis function you write.
+	def printImage(self, pixels):
+		"""
+		Prints a Datum object that contains all pixels in the
+		provided list of pixels.	This will serve as a helper function
+		to the analysis function you write.
 
-			Pixels should take the form
-			[(2,2), (2, 3), ...]
-			where each tuple represents a pixel.
-			"""
-			image = samples.Datum(None,self.width,self.height)
-			for pix in pixels:
-				try:
-					# This is so that new features that you could define which
-					# which are not of the form of (x,y) will not break
-					# this image printer...
-					x,y = pix
-					image.pixels[x][y] = 2
-				except:
-					print "new features:", pix
-					continue
-			print image
+		Pixels should take the form
+		[(2,2), (2, 3), ...]
+		where each tuple represents a pixel.
+		"""
+		image = samples.Datum(None,self.width,self.height)
+		for pix in pixels:
+			try:
+				# This is so that new features that you could define which
+				# which are not of the form of (x,y) will not break
+				# this image printer...
+				x,y = pix
+				image.pixels[x][y] = 2
+			except:
+				print "new features:", pix
+				continue
+		print image
 
 def default(str):
 	return str + ' [Default: %default]'
@@ -183,7 +183,7 @@ def runClassifier(args, options):
 	trainingData = map(featureFunction, rawTrainingData)
 	validationData = map(featureFunction, rawValidationData)
 	testData = map(featureFunction, rawTestData)
-	
+
 	# Validation
 	X1 = []
 	Y1 = []
@@ -192,17 +192,18 @@ def runClassifier(args, options):
 	X2 = []
 	Y2 = []
 
-	for coef in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]:
+	start = int(0)
+	for end in [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]:
 
 		# Conduct training and testing
-		print "Training on",int(coef*len(trainingData)),"..."
-		classifier.train(trainingData[0:int(coef*len(trainingData))], trainingLabels[0:int(coef*len(trainingLabels))], validationData, validationLabels)
+		print "Training on",int(end*len(trainingData)),"..."
+		classifier.train(trainingData[start:int(end*len(trainingData))], trainingLabels[start:int(end*len(trainingLabels))], validationData, validationLabels)
 
 		print "Validating ..."
 		guesses = classifier.classify(validationData)
 		correct = [guesses[i] == validationLabels[i] for i in range(len(validationLabels))].count(True)
 		print str(correct), ("correct out of " + str(len(validationLabels)) + " (%.1f%%).") % (100.0 * correct / len(validationLabels))
-		X1.append(int(coef*len(trainingData)))
+		X1.append(int(end*len(trainingData)))
 		percentage = float(100.0 * (float(correct) / float(len(validationLabels))))
 		Y1.append(percentage)
 
@@ -210,7 +211,7 @@ def runClassifier(args, options):
 		guesses = classifier.classify(testData)
 		correct = [guesses[i] == testLabels[i] for i in range(len(testLabels))].count(True)
 		print str(correct), ("correct out of " + str(len(testLabels)) + " (%.1f%%).") % (100.0 * correct / len(testLabels))
-		X2.append(int(coef*len(trainingData)))
+		X2.append(int(end*len(trainingData)))
 		percentage = float(100.0 * (float(correct) / float(len(testLabels))))
 		Y2.append(percentage)
 		analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
@@ -221,11 +222,13 @@ def runClassifier(args, options):
 				print ("=== Features with high weight for label %d ==="%l)
 				printImage(features_weights)
 
+		start = int(end + 1)
+
 	XP = np.linspace(0, len(trainingData), 5000)
 	P1 = np.poly1d(np.polyfit(X1,Y1,2))
-	print 'coef of validationData:', np.polyfit(X1,Y1,2)
+	print 'end of validationData:', np.polyfit(X1,Y1,2)
 	P2 = np.poly1d(np.polyfit(X2,Y2,2))
-	print 'coef of testData:', np.polyfit(X2,Y2,2)
+	print 'end of testData:', np.polyfit(X2,Y2,2)
 
 	plt.plot(X1,Y1,'ro')
 	plt.plot(XP,P1(XP),'r-',label="validationData")

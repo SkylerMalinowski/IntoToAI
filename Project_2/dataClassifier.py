@@ -57,43 +57,43 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
 	# Put any code here...
 	# Example of use:
 	for i in range(len(guesses)):
-			prediction = guesses[i]
-			truth = testLabels[i]
-			if (prediction != truth):
-				print "==================================="
-				print "Mistake on example %d" % i
-				print "Predicted %d; truth is %d" % (prediction, truth)
-				print "Image: "
-				print rawTestData[i]
-				break
+		prediction = guesses[i]
+		truth = testLabels[i]
+		if (prediction != truth):
+			print "==================================="
+			print "Mistake on example %d" % i
+			print "Predicted %d; truth is %d" % (prediction, truth)
+			print "Image: "
+			print rawTestData[i]
+			break
 
 class ImagePrinter:
-		def __init__(self, width, height):
-			self.width = width
-			self.height = height
+	def __init__(self, width, height):
+		self.width = width
+		self.height = height
 
-		def printImage(self, pixels):
-			"""
-			Prints a Datum object that contains all pixels in the
-			provided list of pixels.	This will serve as a helper function
-			to the analysis function you write.
+	def printImage(self, pixels):
+		"""
+		Prints a Datum object that contains all pixels in the
+		provided list of pixels.	This will serve as a helper function
+		to the analysis function you write.
 
-			Pixels should take the form
-			[(2,2), (2, 3), ...]
-			where each tuple represents a pixel.
-			"""
-			image = samples.Datum(None,self.width,self.height)
-			for pix in pixels:
-				try:
-					# This is so that new features that you could define which
-					# which are not of the form of (x,y) will not break
-					# this image printer...
-					x,y = pix
-					image.pixels[x][y] = 2
-				except:
-					print "new features:", pix
-					continue
-			print image
+		Pixels should take the form
+		[(2,2), (2, 3), ...]
+		where each tuple represents a pixel.
+		"""
+		image = samples.Datum(None,self.width,self.height)
+		for pix in pixels:
+			try:
+				# This is so that new features that you could define which
+				# which are not of the form of (x,y) will not break
+				# this image printer...
+				x,y = pix
+				image.pixels[x][y] = 2
+			except:
+				print "new features:", pix
+				continue
+		print image
 
 def default(str):
 	return str + ' [Default: %default]'
