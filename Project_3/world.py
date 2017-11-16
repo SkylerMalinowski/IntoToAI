@@ -6,10 +6,12 @@
 # **************************************************************************** #
 
 import sys
+import math
 import random
 import numpy as np
-import scipy as sp
+import matplotlib.pyplot as plt
 from PIL import Image
+from matplotlib import colors
 
 
 # fileRead()  ******************************************************************
@@ -43,28 +45,16 @@ def saveFile( world, length, fileName ):
 # display()  *******************************************************************
 def display( fileName ):
 	world,length = fileRead(fileName)
-	color = { '0':[0,0,0], '1':[255,255,255], '2':[224,224,224], 'a':[80,208,255], 'b':[0,32,255] }
+	color = { '0':[0,0,0], '1':[255,255,255], '2':[224,224,224],
+		'a':[80,208,255], 'b':[0,32,255], 's':[255,255,0], 'g':[255,0,0] }
 	'''
 	'0' 	= Black 		= [0,0,0]
 	'1' 	= White 		= [255,255,255]
 	'2' 	= Grey 			= [128,128,128]
 	'a' 	= Light Blue 	= [80,208,255]
 	'b' 	= Blue 			= [0,32,225]
-	'''
-	
-	'''
-	root = tk.Tk()
-	root.title("Grid World")
-	
-	# Need: Display world as a grid with colors
-	for row in range(length[0]):
-		
-		for col in range(length[1]):
-			
-			tk.Label(root,text='%s'%(world[row][col]),borderwidth=10,
-			relief='groove').grid(row=row,column=col)
-	
-	root.mainloop()
+	's' 	= Yellow 		= [255,255,0]
+	'g' 	= Red 			= [255,0,0]
 	'''
 	color_world = np.ones([length[0],length[1],3],dtype=np.uint8)
 	
@@ -76,11 +66,83 @@ def display( fileName ):
 	
 	img = Image.fromarray(color_world)
 	img.save(fileName[:-4]+'.png')
+	
+	''''  Sample Code
+	data = np.random.rand(10, 10) * 20
+	
+	# create discrete colormap
+	cmap = colors.ListedColormap(['red', 'blue'])
+	bounds = [0,10,20]
+	norm = colors.BoundaryNorm(bounds, cmap.N)
+	
+	fig, ax = plt.subplots()
+	ax.imshow(data, cmap=cmap, norm=norm)
+	
+	# draw gridlines
+	ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
+	ax.set_xticks(np.arange(-.5, 10, 1));
+	ax.set_yticks(np.arange(-.5, 10, 1));
+	
+	plt.show()
+	Modify Below For Our Data  '''
+	
+	data = np.random.rand(10, 10) * 20
+	
+	# create discrete colormap
+	cmap = colors.ListedColormap(['red', 'blue'])
+	bounds = [0,10,20]
+	norm = colors.BoundaryNorm(bounds, cmap.N)
+	
+	fig, ax = plt.subplots()
+	ax.imshow(data, cmap=cmap, norm=norm)
+	
+	# draw gridlines
+	ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
+	ax.set_xticks(np.arange(-.5, 10, 1));
+	ax.set_yticks(np.arange(-.5, 10, 1));
+	
+	plt.show()
 
 
 # keyCells()  ******************************************************************
 def keyCells( world, length ):
-	pass
+	start_cell = [0,0]
+	goal_cell = [0,0]
+	done = False
+	
+	while( not done ):
+		
+		r = random.uniform(0,1)
+		
+		# Top Margin
+		if( r > 0.5 ):
+			start_cell[0] = random.randint(0,int(0.2*(length[1]-1)))
+			start_cell[1] = random.randint(0,length[1]-1)
+		
+		# Bottom Margin
+		else:
+			start_cell[0] = random.randint(int(0.2*(length[0]-1)),length[0]-1)
+			start_cell[1] = random.randint(0,length[1]-1)
+		
+		r = random.uniform(0,1)
+		
+		# Left Margin
+		if( r > 0.5 ):
+			goal_cell[0] = random.randint(0,length[0]-1)
+			goal_cell[1] = random.randint(0,int(0.2*(length[1]-1)))
+		
+		# Right Margin
+		else:
+			goal_cell[0] = random.randint(0,length[0]-1)
+			goal_cell[1] = random.randint(int(0.2*(length[1]-1)),length[1]-1)
+		
+		if( (math.sqrt(math.pow(start_cell[0]-goal_cell[0],2)+math.pow(start_cell[1]-goal_cell[1],2)) >= 100) 
+		and (world[start_cell[0],start_cell[1]] is not '1') 
+		and (world[goal_cell[0],goal_cell[1]] is not '1') ):
+			done = True
+	
+	world[start_cell[0],start_cell[1]] = 's'
+	world[goal_cell[0],goal_cell[1]] = 'g'
 
 
 # blockedCells()  **************************************************************
@@ -192,14 +254,14 @@ def highwayCells( world, length ):
 			
 			# Left Side
 			elif( r == 2 ):
-				edge[1] = 0
 				edge[0] = random.randint(0,length[0]-1)
+				edge[1] = 0
 				direction = 'right'
 			
 			# Right Side
 			elif( r == 3 ):
-				edge[1] = length[1]-1
 				edge[0] = random.randint(0,length[0]-1)
+				edge[1] = length[1]-1
 				direction = 'left'
 			
 			# Failure
@@ -302,11 +364,6 @@ def generate( length, fileName ):
 	world = highwayCells(world,length)
 	blockedCells(world,length)
 	keyCells(world,length)
-	
-	# top 20 rows or bottom 20 rows
-	# left-most 20 columns or right-most 20 columns
-	#S_start = [0,0]
-	#S_end = [length[0]-1,length[1]-1]
 	
 	saveFile(world,length,fileName)
 
