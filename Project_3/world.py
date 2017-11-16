@@ -18,6 +18,11 @@ from matplotlib import colors
 def fileRead( fileName ):
 	world = []
 	
+	# Line 1 = start Coordinate
+	# Line 2 = Goal Coordinate
+	# Line (3 to 8) = Hard Cell Center Coordinates
+	# Then the ascii matrix
+	
 	with open(fileName,'r') as out:
 		
 		for line in out:
@@ -29,6 +34,11 @@ def fileRead( fileName ):
 
 # saveFile()  ******************************************************************
 def saveFile( world, length, fileName ):
+	
+	# Line 1 = start Coordinate
+	# Line 2 = Goal Coordinate
+	# Line (3 to 8) = Hard Cell Center Coordinates
+	# Then the ascii matrix
 	
 	with open(fileName,'w') as out:
 		
@@ -104,6 +114,36 @@ def display( fileName ):
 	plt.show()
 
 
+# selectLeyLocation()  *********************************************************
+def selectLeyLocation( cell ):
+	r = random.randint(0,3)
+		
+	# Top Margin
+	if( r == 0 ):
+		cell[0] = random.randint(0,int(0.2*(length[1]-1)))
+		cell[1] = random.randint(0,length[1]-1)
+	
+	# Bottom Margin
+	elif( r == 1 ):
+		cell[0] = random.randint(int(0.2*(length[0]-1)),length[0]-1)
+		cell[1] = random.randint(0,length[1]-1)
+	
+	# Left Margin
+	elif( r == 2 ):
+		cell[0] = random.randint(0,length[0]-1)
+		cell[1] = random.randint(0,int(0.2*(length[1]-1)))
+	
+	# Right Margin
+	elif( r == 3 ):
+		cell[0] = random.randint(0,length[0]-1)
+		cell[1] = random.randint(int(0.2*(length[1]-1)),length[1]-1)
+	
+	# Failure
+	else:
+		print("Error: Location cannot be determined");
+	
+	return cell
+
 # keyCells()  ******************************************************************
 def keyCells( world, length ):
 	start_cell = [0,0]
@@ -112,33 +152,12 @@ def keyCells( world, length ):
 	
 	while( not done ):
 		
-		r = random.uniform(0,1)
-		
-		# Top Margin
-		if( r > 0.5 ):
-			start_cell[0] = random.randint(0,int(0.2*(length[1]-1)))
-			start_cell[1] = random.randint(0,length[1]-1)
-		
-		# Bottom Margin
-		else:
-			start_cell[0] = random.randint(int(0.2*(length[0]-1)),length[0]-1)
-			start_cell[1] = random.randint(0,length[1]-1)
-		
-		r = random.uniform(0,1)
-		
-		# Left Margin
-		if( r > 0.5 ):
-			goal_cell[0] = random.randint(0,length[0]-1)
-			goal_cell[1] = random.randint(0,int(0.2*(length[1]-1)))
-		
-		# Right Margin
-		else:
-			goal_cell[0] = random.randint(0,length[0]-1)
-			goal_cell[1] = random.randint(int(0.2*(length[1]-1)),length[1]-1)
+		start_cell = selectLeyLocation(start_cell)
+		goal_cell = selectLeyLocation(goal_cell)
 		
 		if( (math.sqrt(math.pow(start_cell[0]-goal_cell[0],2)+math.pow(start_cell[1]-goal_cell[1],2)) >= 100) 
-		and (world[start_cell[0],start_cell[1]] is not '1') 
-		and (world[goal_cell[0],goal_cell[1]] is not '1') ):
+		and (world[start_cell[0],start_cell[1]] is not '0') 
+		and (world[goal_cell[0],goal_cell[1]] is not '0') ):
 			done = True
 	
 	world[start_cell[0],start_cell[1]] = 's'
