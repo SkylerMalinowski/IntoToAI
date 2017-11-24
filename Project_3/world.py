@@ -8,6 +8,7 @@
 import sys
 import math
 import random
+import xlsxwriter
 
 import numpy as np
 
@@ -59,12 +60,16 @@ def saveFile( world, length, fileName, kCells, centers ):
 
 
 # Class  ***********************************************************************
+'''' # No not need unless tkinter is being used
 class CellGrid(Canvas):
 	
 	def __init__(self,master, rowNumber, columnNumber, cellSize, theMap):
 		Canvas.__init__(self, master, width = cellSize * columnNumber , height = cellSize * rowNumber)
-		
+		self.pack()
 		self.cellSize = cellSize
+		
+		scrollbar = Scrollbar(master)
+		scrollbar.pack(side=RIGHT, fill=Y)
 		
 		self.grid = []
 		for row in range(rowNumber):
@@ -73,36 +78,25 @@ class CellGrid(Canvas):
 				line.append(Cell(self, column, row, cellSize, theMap[row][column]))
 			self.grid.append(line)
 		
-		print(self.grid[0][0].value)
 		self.draw()
-
-
+	
 	def draw(self):
 		for row in self.grid:
 			for cell in row:
 				cell.draw()
 
+
 class Cell():
-	''''
+	
 	colors = { 
-				'0':"black",	# blocked cell
-				'1':"white",	# regular unblocked cell
-				'2':"",			# hard to traverse cell
-				'a':"",			# regular unblocked cell with a highway
-				'b':"",			# hard to traverse cell with a highway
-				's':"green",	# start cell
-				'g':"red"		# finish cell
-			}
-	'''
-	colors = {
-				0: 'white',    # untried
-				1: 'black',    # obstacle
-				2: 'green',    # start
-				3: 'red',      # finish
-				4: 'blue',     # open
-				5: 'gray',     # closed
-				6: 'orange',   # path
-			}
+		'0':"black",		# blocked cell
+		'1':"white",		# regular unblocked cell
+		'2':"grey",			# hard to traverse cell
+		'a':"light blue",	# regular unblocked cell with a highway
+		'b':"blue",			# hard to traverse cell with a highway
+		's':"green",		# start cell
+		'g':"red"			# finish cell
+	}
 	
 	def __init__(self, master, x, y, size, value):
 		self.master = master
@@ -118,33 +112,49 @@ class Cell():
 	def draw(self):
 		""" order to the cell to draw its representation on the canvas """
 		if self.master != None :
-			fill=self.colors[self.value]
-			
 			xmin = self.abs * self.size
 			xmax = xmin + self.size
 			ymin = self.ord * self.size
 			ymax = ymin + self.size
 			
 			self.master.create_rectangle(xmin, ymin, xmax, ymax, fill=self.colors[self.value], outline = "black")
-
+'''
 
 # display()  *******************************************************************
 def display( fileName ):
-	world,length,kCells,centers = readFile(fileName)
-	''''
-	world = [
-				[2, 0, 0, 0, 0],
-				[0, 1, 1, 1, 1],
-				[0, 1, 3, 0, 0],
-				[0, 1, 1, 1, 0],
-				[0, 0, 0, 0, 0],
-			]
 	
+	colors = { 
+		'0':"black",	# blocked cell
+		'1':"white",	# regular unblocked cell
+		'2':"grey",		# hard to traverse cell
+		'a':"blue",		# regular unblocked cell with a highway
+		'b':"navy",		# hard to traverse cell with a highway
+		's':"green",	# start cell
+		'g':"red"		# finish cell
+	}
+	
+	world,length,kCells,centers = readFile(fileName)
+	
+	'''' # No Scrollbars
 	root = Tk()
-	#GUI = CellGrid(root,length[0],length[1],40,world)
-	GUI = CellGrid(root,len(world),len(world[0]),40,world)
+	root.title( fileName )
+	GUI = CellGrid(root,length[0],length[1],40,world)
 	root.mainloop()
 	'''
+	
+	with xlsxwriter.Workbook(fileName[:-4]+'.xlsx', {'constant_memory': True}) as workbook:
+	
+		worksheet1 = workbook.add_worksheet("Raw")
+		worksheet2 = workbook.add_worksheet("Colored")
+		
+		format1 = workbook.add_format()
+		format1.set_center_across()
+		
+		for row in range(length[0]):
+			for col in range(length[1]):
+				worksheet1.write(row, col, world[row][col], format1)
+				format2 = workbook.add_format({'bg_color':str(colors[world[row][col]])})
+				worksheet2.write_blank(row, col, '', format2)
 
 
 # selectLeyLocation()  *********************************************************
