@@ -8,39 +8,45 @@
 import sys
 import math
 import random
+
 import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
-from matplotlib import colors
+
+from tkinter import *
 
 
-# fileRead()  ******************************************************************
-def fileRead( fileName ):
+# readFile()  ******************************************************************
+def readFile( fileName ):
+	kCells = []
+	centers = []
 	world = []
 	
-	# Line 1 = start Coordinate
-	# Line 2 = Goal Coordinate
-	# Line (3 to 8) = Hard Cell Center Coordinates
-	# Then the ascii matrix
-	
 	with open(fileName,'r') as out:
+		
+		for i in range(2):
+			line = out.readline().rstrip()
+			kCells.append([int(line.split('[')[1].split(',')[0]),int(line.split(',')[1].split(']')[0])])
+		
+		for i in range(8):
+			line = out.readline().rstrip()
+			centers.append([int(line.split('[')[1].split(',')[0]),int(line.split(',')[1].split(']')[0])])
 		
 		for line in out:
 			cell = line.split()
 			world.append(cell)
 	
-	return np.array(world), [len(world[0:]),len(world[0])]
+	return np.array(world), [len(world[0:]),len(world[0])], kCells, centers
 
 
 # saveFile()  ******************************************************************
-def saveFile( world, length, fileName ):
-	
-	# Line 1 = start Coordinate
-	# Line 2 = Goal Coordinate
-	# Line (3 to 8) = Hard Cell Center Coordinates
-	# Then the ascii matrix
+def saveFile( world, length, fileName, kCells, centers ):
 	
 	with open(fileName,'w') as out:
+		
+		out.write(str(kCells[0])+'\n')
+		out.write(str(kCells[1])+'\n')
+		
+		for i in range(8):
+			out.write(str(centers[i])+'\n')
 		
 		for x in range(length[0]):
 			
@@ -52,70 +58,97 @@ def saveFile( world, length, fileName ):
 			out.write('\n')
 
 
+# Class  ***********************************************************************
+class CellGrid(Canvas):
+	
+	def __init__(self,master, rowNumber, columnNumber, cellSize, theMap):
+		Canvas.__init__(self, master, width = cellSize * columnNumber , height = cellSize * rowNumber)
+		
+		self.cellSize = cellSize
+		
+		self.grid = []
+		for row in range(rowNumber):
+			line = []
+			for column in range(columnNumber):
+				line.append(Cell(self, column, row, cellSize, theMap[row][column]))
+			self.grid.append(line)
+		
+		print(self.grid[0][0].value)
+		self.draw()
+
+
+	def draw(self):
+		for row in self.grid:
+			for cell in row:
+				cell.draw()
+
+class Cell():
+	''''
+	colors = { 
+				'0':"black",	# blocked cell
+				'1':"white",	# regular unblocked cell
+				'2':"",			# hard to traverse cell
+				'a':"",			# regular unblocked cell with a highway
+				'b':"",			# hard to traverse cell with a highway
+				's':"green",	# start cell
+				'g':"red"		# finish cell
+			}
+	'''
+	colors = {
+				0: 'white',    # untried
+				1: 'black',    # obstacle
+				2: 'green',    # start
+				3: 'red',      # finish
+				4: 'blue',     # open
+				5: 'gray',     # closed
+				6: 'orange',   # path
+			}
+	
+	def __init__(self, master, x, y, size, value):
+		self.master = master
+		self.abs = x
+		self.ord = y
+		self.size = size
+		self.fill = "white"
+		self.value = value
+	
+	def setValue(self, value):
+		self.value = value
+	
+	def draw(self):
+		""" order to the cell to draw its representation on the canvas """
+		if self.master != None :
+			fill=self.colors[self.value]
+			
+			xmin = self.abs * self.size
+			xmax = xmin + self.size
+			ymin = self.ord * self.size
+			ymax = ymin + self.size
+			
+			self.master.create_rectangle(xmin, ymin, xmax, ymax, fill=self.colors[self.value], outline = "black")
+
+
 # display()  *******************************************************************
 def display( fileName ):
-	world,length = fileRead(fileName)
-	color = { '0':[0,0,0], '1':[255,255,255], '2':[224,224,224],
-		'a':[80,208,255], 'b':[0,32,255], 's':[255,255,0], 'g':[255,0,0] }
+	world,length,kCells,centers = readFile(fileName)
+	''''
+	world = [
+				[2, 0, 0, 0, 0],
+				[0, 1, 1, 1, 1],
+				[0, 1, 3, 0, 0],
+				[0, 1, 1, 1, 0],
+				[0, 0, 0, 0, 0],
+			]
+	
+	root = Tk()
+	#GUI = CellGrid(root,length[0],length[1],40,world)
+	GUI = CellGrid(root,len(world),len(world[0]),40,world)
+	root.mainloop()
 	'''
-	'0' 	= Black 		= [0,0,0]
-	'1' 	= White 		= [255,255,255]
-	'2' 	= Grey 			= [128,128,128]
-	'a' 	= Light Blue 	= [80,208,255]
-	'b' 	= Blue 			= [0,32,225]
-	's' 	= Yellow 		= [255,255,0]
-	'g' 	= Red 			= [255,0,0]
-	'''
-	color_world = np.ones([length[0],length[1],3],dtype=np.uint8)
-	
-	for row in range(length[0]):
-		
-		for col in range(length[1]):
-			
-			color_world[row,col,:] = color[world[row,col]]
-	
-	img = Image.fromarray(color_world)
-	img.save(fileName[:-4]+'.png')
-	
-	''''  Sample Code
-	data = np.random.rand(10, 10) * 20
-	
-	# create discrete colormap
-	cmap = colors.ListedColormap(['red', 'blue'])
-	bounds = [0,10,20]
-	norm = colors.BoundaryNorm(bounds, cmap.N)
-	
-	fig, ax = plt.subplots()
-	ax.imshow(data, cmap=cmap, norm=norm)
-	
-	# draw gridlines
-	ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
-	ax.set_xticks(np.arange(-.5, 10, 1));
-	ax.set_yticks(np.arange(-.5, 10, 1));
-	
-	plt.show()
-	Modify Below For Our Data  '''
-	
-	data = np.random.rand(10, 10) * 20
-	
-	# create discrete colormap
-	cmap = colors.ListedColormap(['red', 'blue'])
-	bounds = [0,10,20]
-	norm = colors.BoundaryNorm(bounds, cmap.N)
-	
-	fig, ax = plt.subplots()
-	ax.imshow(data, cmap=cmap, norm=norm)
-	
-	# draw gridlines
-	ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
-	ax.set_xticks(np.arange(-.5, 10, 1));
-	ax.set_yticks(np.arange(-.5, 10, 1));
-	
-	plt.show()
 
 
 # selectLeyLocation()  *********************************************************
-def selectLeyLocation( cell ):
+def selectKeyLocation( cell ):
 	r = random.randint(0,3)
 		
 	# Top Margin
@@ -145,23 +178,21 @@ def selectLeyLocation( cell ):
 	return cell
 
 # keyCells()  ******************************************************************
-def keyCells( world, length ):
-	start_cell = [0,0]
-	goal_cell = [0,0]
+def keyCells( world, length, kCells ):
 	done = False
 	
 	while( not done ):
 		
-		start_cell = selectLeyLocation(start_cell)
-		goal_cell = selectLeyLocation(goal_cell)
+		kCells[0] = selectKeyLocation(kCells[0])
+		kCells[1] = selectKeyLocation(kCells[1])
 		
-		if( (math.sqrt(math.pow(start_cell[0]-goal_cell[0],2)+math.pow(start_cell[1]-goal_cell[1],2)) >= 100) 
-		and (world[start_cell[0],start_cell[1]] is not '0') 
-		and (world[goal_cell[0],goal_cell[1]] is not '0') ):
+		if( (math.sqrt(math.pow(kCells[0][0]-kCells[1][0],2)+math.pow(kCells[0][1]-kCells[1][1],2)) >= 100) 
+		and (world[kCells[0][0],kCells[0][1]] is not '0') 
+		and (world[kCells[1][0],kCells[1][1]] is not '0') ):
 			done = True
 	
-	world[start_cell[0],start_cell[1]] = 's'
-	world[goal_cell[0],goal_cell[1]] = 'g'
+	world[kCells[0][0],kCells[0][1]] = 's'
+	world[kCells[1][0],kCells[1][1]] = 'g'
 
 
 # blockedCells()  **************************************************************
@@ -344,15 +375,14 @@ def highwayCells( world, length ):
 
 
 # hardCells()  *****************************************************************
-def hardCells( world, length ):
-	hardCell_centers = []
+def hardCells( world, length, centers ):
 	radii = 15
 	
 	for hardCell_num in range(8):
-		hardCell_centers.append([random.randint(0,length[0]-1),random.randint(0,length[0]-1)])
+		centers.append([random.randint(0,length[0]-1),random.randint(0,length[0]-1)])
 		# Need: Reroll duplicates
 	
-	for row,col in hardCell_centers:
+	for row,col in centers:
 		top = max(0,row-radii)
 		bottom = min(length[0]-1,row+radii)
 		left = max(0,col-radii)
@@ -378,22 +408,29 @@ def generate( length, fileName ):
 	length[0] = int(length[0])
 	length[1] = int(length[1])
 	world = np.ones(shape=(length[0],length[1]),dtype=str)
+	kCells = [[0,0],[0,0]]
+	centers = []
 	
-	hardCells(world,length)
+	# Procedurally generate World
+	hardCells(world,length,centers)
 	world = highwayCells(world,length)
 	blockedCells(world,length)
-	keyCells(world,length)
 	
-	saveFile(world,length,fileName)
+	for i in range(10):
+		keyCells(world,length,kCells)
+		
+		# Save the World for I/O
+		saveFile(world,length,fileName[:-4]+str(i+1)+'.txt',kCells,centers)
 
 
 # main()  **********************************************************************
 def main( length, fileName ):
 	
-	if( length is not None and fileName is not None ):
-		generate(length,fileName)
+	if( length is None ):
+		display(fileName)
 	
-	display(fileName)
+	else:
+		generate(length,fileName)
 
 
 # parseCommand()  **************************************************************
