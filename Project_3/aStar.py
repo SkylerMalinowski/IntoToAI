@@ -50,14 +50,12 @@ class aStar:
 
 		def heapsort( cellList ):
 			heap = []
-			sortedHeap = []
 			for cell in cellList:
-				heapq.heappush(heap,(cell.f,cell))
-			for tup in range(len(heap)):
-				x = heapq.heappop(heap)
-				print(x[0],x[1])
-				sortedHeap.append(x[1])
-			return sortedHeap
+				heap.append((cell.f,cell))
+			heap.sort(key=operator.itemgetter(0))
+			for i in range(len(heap)):
+				heap[i] = heap[i][1]
+			return heap
 
 		def g( p, c ):
 			# diagonal movement or not
@@ -166,7 +164,7 @@ class aStar:
 				# Goal Found
 				if(self.world[child.where[0]][child.where[1]] == 'g'):
 					print("Path Found")
-					#tracePath(child)
+					tracePath(child)
 					self.found = True
 					return
 
@@ -201,7 +199,6 @@ class aStar:
 		while( len(self.openList) != 0 ):
 			# find smallest 'f' in openList
 			self.openList = heapsort(self.openList)
-			input()
 			# pop the smallest 'f'
 			q = self.openList.pop(0)
 			# generate successors
