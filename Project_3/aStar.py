@@ -199,6 +199,7 @@ class aStar:
 		while( len(self.openList) != 0 ):
 			# find smallest 'f' in openList
 			self.openList = heapsort(self.openList)
+			input()
 			# pop the smallest 'f'
 			q = self.openList.pop(0)
 			# generate successors
