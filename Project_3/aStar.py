@@ -165,7 +165,7 @@ class aStar:
 				# Goal Found
 				if(self.world[child.where[0]][child.where[1]] == 'g'):
 					print("Path Found")
-					#tracePath(child)
+					tracePath(child)
 					self.found = True
 					return
 
@@ -198,6 +198,7 @@ class aStar:
 
 # main()  **********************************************************************
 def main():
+	
 	world = [
 		['s','1','1','1','1','1'],
 		['0','1','0','0','0','1'],
@@ -207,14 +208,14 @@ def main():
 		['1','1','1','1','0','1'],
 		['0','0','0','0','0','g']
 	]
-
-	#fileName = sys.argv[1]
-
-	#world,length,kCells,Centers = IO.readFile(sys.argv[1])
+	
+	fileName = sys.argv[1]
+	world,length,kCells,Centers = IO.readFile(fileName)
 
 	pathData = aStar(world).search()
 	#pathData = aStar(world,5.5).search()
-	#IO.display(fileName,world,pathData)
+	
+	IO.display(fileName,world,pathData)
 
 
 # Self Run  ********************************************************************
