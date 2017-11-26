@@ -117,7 +117,7 @@ class aStar:
 
 			# Top Left
 			if(parent.where[0]+1 >= 0 and parent.where[0]+1 < self.length[0]
-			and parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[0]
+			and parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[1]
 			and self.world[parent.where[0]+1][parent.where[1]-1] != '0'):
 				s.append(cell(parent.where[0]+1,parent.where[1]-1,parent))
 			# Top Center
@@ -126,22 +126,22 @@ class aStar:
 				s.append(cell(parent.where[0]+1,parent.where[1],parent))
 			# Top Right
 			if(parent.where[0]+1 >= 0 and parent.where[0]+1 < self.length[0]
-			and parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[0]
+			and parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[1]
 			and self.world[parent.where[0]+1][parent.where[1]+1] != '0'):
 				s.append(cell(parent.where[0]+1,parent.where[1]+1,parent))
 
 			# Center Left
-			if(parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[0]
+			if(parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[1]
 			and self.world[parent.where[0]][parent.where[1]-1] != '0'):
 				s.append(cell(parent.where[0],parent.where[1]-1,parent))
 			# Center Right
-			if(parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[0]
+			if(parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[1]
 			and self.world[parent.where[0]][parent.where[1]+1] != '0'):
 				s.append(cell(parent.where[0],parent.where[1]+1,parent))
 
 			# Bottom Left
-			if(parent.where[0]-1 >= 0 and parent.where[0]-1 < self.length[0]
-			and parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[0]
+			if(parent.where[0]-1 >= 0 and parent.where[0]-1 < self.length[0]-1
+			and parent.where[1]-1 >= 0 and parent.where[1]-1 < self.length[1]
 			and self.world[parent.where[0]-1][parent.where[1]-1] != '0'):
 				s.append(cell(parent.where[0]-1,parent.where[1]-1,parent))
 			# Bottom Center
@@ -150,7 +150,7 @@ class aStar:
 				s.append(cell(parent.where[0]-1,parent.where[1],parent))
 			# Bottom Right
 			if(parent.where[0]-1 >= 0 and parent.where[0]-1 < self.length[0]
-			and parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[0]
+			and parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[1]
 			and self.world[parent.where[0]-1][parent.where[1]+1] != '0'):
 				s.append(cell(q.where[0]-1,parent.where[1]+1,parent))
 
@@ -165,7 +165,7 @@ class aStar:
 				# Goal Found
 				if(self.world[child.where[0]][child.where[1]] == 'g'):
 					print("Path Found")
-					tracePath(child)
+					#tracePath(child)
 					self.found = True
 					return
 
@@ -179,22 +179,6 @@ class aStar:
 						good = False
 				if( good == True ):
 					self.openList.append(child)
-					#print(child.where,child.f,child.g,child.h)
-
-				'''
-				# populate openList with new valid cells
-				good = True
-				for listCell in self.closedList:
-					if( child.where == listCell.where and child.f < listCell.f ):
-						good = False
-				for listCell in self.openList:
-					if( child.where == listCell.where and good == True ):
-						if( child.f < listCell.f):
-							listCell = child
-						good = False
-				if( good == True ):
-					self.openList.append(child)
-				'''
 
 		# main()
 		while( len(self.openList) != 0 ):
@@ -212,27 +196,16 @@ class aStar:
 		return self.pathData
 
 
-# class  ***********************************************************************
-class heuristic_algorithm:
-
-	def __init__( self, w1, w2,  ):
-		self.start = start
-		self.goal = goal
-		self.w = [w1,w2]  # w1,w2 >= 1.0
-		self.openList = []
-		self.closedList = []
-
-
 # main()  **********************************************************************
 def main():
 	world = [
-		['s','1','1','1','1','1','0'],
-		['0','1','0','0','0','1','0'],
-		['0','1','0','0','0','1','0'],
-		['1','1','0','1','1','1','0'],
-		['1','0','0','1','0','1','0'],
-		['1','1','1','1','0','1','0'],
-		['0','0','0','0','0','g','0']
+		['s','1','1','1','1','1'],
+		['0','1','0','0','0','1'],
+		['0','1','0','0','0','1'],
+		['1','1','0','1','1','1'],
+		['1','0','0','1','0','1'],
+		['1','1','1','1','0','1'],
+		['0','0','0','0','0','g']
 	]
 
 	#fileName = sys.argv[1]
@@ -240,7 +213,7 @@ def main():
 	#world,length,kCells,Centers = IO.readFile(sys.argv[1])
 
 	pathData = aStar(world).search()
-	pathData = aStar(world,5.5).search()
+	#pathData = aStar(world,5.5).search()
 	#IO.display(fileName,world,pathData)
 
 
