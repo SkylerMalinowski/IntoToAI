@@ -47,14 +47,19 @@ class aStar:
 	def search( self ):
 
 		def heapsort( cellList ):
-			h = []
+			heap = []
+			sortedHeap = []
 			for cell in cellList:
-				heapq.heappush(h, cell.f)
-			return [heapq.heappop(h) for i in range(len(h))]
+				heapq.heappush(heap,(cell.f,cell))
+			for tup in range(len(heap)):
+				x = heapq.heappop(heap)
+				print(x)
+				sortedHeap.append(x[1])
+			return sortedHeap
 
 		def g( p, c ):
 			# diagonal movement or not
-			m = 1
+			m = 2
 			if( c.where[0]-p.where[0] == 0 and c.where[1]-p.where[1] != 0 or
 			c.where[0]-p.where[0] != 0 and c.where[1]-p.where[1] == 0):
 				m = 1
@@ -159,11 +164,10 @@ class aStar:
 				# Goal Found
 				if(self.world[child.where[0]][child.where[1]] == 'g'):
 					print("Path Found")
-					tracePath(child)
+					#tracePath(child)
 					self.found = True
 					return
 
-				''''
 				# populate openList with new valid cells
 				good = True
 				for listCell in self.openList:
@@ -174,10 +178,9 @@ class aStar:
 						good = False
 				if( good == True ):
 					self.openList.append(child)
-					print(child.where,child.f,child.g,child.h)
-					input()
-				'''
+					#print(child.where,child.f,child.g,child.h)
 
+				'''
 				# populate openList with new valid cells
 				good = True
 				for listCell in self.closedList:
@@ -190,14 +193,14 @@ class aStar:
 						good = False
 				if( good == True ):
 					self.openList.append(child)
+				'''
 
 		# main()
 		while( len(self.openList) != 0 ):
 			# find smallest 'f' in openList
-			heapsort(self.openList)
+			self.openList = heapsort(self.openList)
 			# pop the smallest 'f'
 			q = self.openList.pop(0)
-			#print(q.where, q.f, q.g, q.h)
 			# generate successors
 			if( self.found == False ):
 				successors(q)
@@ -206,6 +209,7 @@ class aStar:
 		if( self.found == False ):
 			print("Path Not Found")
 		return self.pathData
+
 
 class aStarWeighted(aStar):
 
@@ -405,7 +409,7 @@ def main():
 	#world,length,kCells,Centers = IO.readFile(sys.argv[1])
 
 	pathData = aStar(world).search()
-	pathData = aStarWeighted(world,5.5).search()
+	#pathData = aStarWeighted(world,5.5).search()
 	#IO.display(fileName,world,pathData)
 
 
