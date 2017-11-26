@@ -25,6 +25,8 @@ class cell:
 		self.g = 0.
 		self.h = 0.
 
+	def __str__(self):
+		return str(self.where)
 
 class aStar:
 
@@ -53,7 +55,7 @@ class aStar:
 				heapq.heappush(heap,(cell.f,cell))
 			for tup in range(len(heap)):
 				x = heapq.heappop(heap)
-				print(x)
+				print(x[0],x[1])
 				sortedHeap.append(x[1])
 			return sortedHeap
 
