@@ -103,14 +103,19 @@ class aStar:
 		def h( c ):
 			c.h = math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2))
 
-		def tracePath( c ):
+	def tracePath( c ):
+		if(self.w == 1):
 			print("Shortest Movement Path Cost =",c.g)
-			curr = c
-			print("Shortest Path Trace")
-			while( curr.parent != None ):
-				print(curr.where)
-				curr = curr.parent
+		if(self.w > 1):
+			print("Shortest Movement Path Cost with weight {} =".format(self.w),c.g)
+		if(self.w == 0):
+			print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
+		curr = c
+		print("Shortest Path Trace")
+		while( curr.parent != None ):
 			print(curr.where)
+			curr = curr.parent
+		print(curr.where)
 
 		def successors( parent ):
 			s = []
@@ -198,7 +203,7 @@ class aStar:
 
 # main()  **********************************************************************
 def main():
-	
+
 	world = [
 		['s','1','1','1','1','1'],
 		['0','1','0','0','0','1'],
@@ -208,13 +213,14 @@ def main():
 		['1','1','1','1','0','1'],
 		['0','0','0','0','0','g']
 	]
-	
+
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
 
-	pathData = aStar(world).search()
-	#pathData = aStar(world,5.5).search()
-	
+	pathData = aStar(world).search()		#standard aStar
+	pathData = aStar(world,5.5).search()	#weighted aStar
+	pathData = aStar(world,0).search()		#Uniform Cost Search
+
 	IO.display(fileName,world,pathData)
 
 
