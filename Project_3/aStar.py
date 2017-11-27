@@ -32,13 +32,14 @@ class aStar:
 
 	def __init__( self, world, weight=1 ):
 		self.world = world
-		self.pathData = []
 		self.goal = None
 		self.length = [len(world),len(world[0])]
+		self.pathData = np.zeros(shape=(self.length[0],self.length[1],5))
 		self.openList = []
 		self.closedList = []
 		self.found = False
 		self.w = weight
+		self.pathList = []
 		while( len(self.openList) == 0 and self.goal == None ):
 			for row in range(self.length[0]):
 				for col in range(self.length[1]):
@@ -46,6 +47,11 @@ class aStar:
 						self.openList.append(cell(row,col))
 					elif(  world[row][col] == 'g' ):
 						self.goal = (row,col)
+		# calculate h
+		self.openList[0].h = math.sqrt(math.pow(self.openList[0].where[0]-self.goal[0],2)
+								 + math.pow(self.openList[0].where[1]-self.goal[1],2))
+		# calculate f
+		self.openList[0].f = self.w*self.openList[0].h
 
 	def search( self ):
 
@@ -103,19 +109,23 @@ class aStar:
 		def h( c ):
 			c.h = math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2))
 
-	def tracePath( c ):
-		if(self.w == 1):
-			print("Shortest Movement Path Cost =",c.g)
-		if(self.w > 1):
-			print("Shortest Movement Path Cost with weight {} =".format(self.w),c.g)
-		if(self.w == 0):
-			print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
-		curr = c
-		print("Shortest Path Trace")
-		while( curr.parent != None ):
-			print(curr.where)
-			curr = curr.parent
-		print(curr.where)
+		def tracePath( c ):
+			if(self.w == 1):
+				print("Shortest Movement Path Cost =",c.g)
+			if(self.w > 1):
+				print("Shortest Movement Path Cost with weight {} =".format(self.w),c.g)
+			if(self.w == 0):
+				print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
+			curr = c
+			print("Shortest Path Trace")
+			while( curr.parent != None ):
+				print(curr.where,curr.f,curr.g,curr.h)
+				self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
+				self.pathList.append(curr.where)
+				curr = curr.parent
+			print(curr.where,curr.f,curr.g,curr.h)
+			self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
+			self.pathList.append(curr.where)
 
 		def successors( parent ):
 			s = []
@@ -191,6 +201,7 @@ class aStar:
 			self.openList = heapsort(self.openList)
 			# pop the smallest 'f'
 			q = self.openList.pop(0)
+			self.pathData[q.where[0]][q.where[1]] = [q.where[0],q.where[1],q.f,q.g,q.h]
 			# generate successors
 			if( self.found == False ):
 				successors(q)
@@ -198,7 +209,7 @@ class aStar:
 
 		if( self.found == False ):
 			print("Path Not Found")
-		return self.pathData
+		return self.pathData, self.pathList
 
 
 # main()  **********************************************************************
@@ -217,11 +228,15 @@ def main():
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
 
-	pathData = aStar(world).search()		#standard aStar
+	pathData, pathList = aStar(world).search()		#standard aStar
+	IO.display(fileName,world,pathData,pathList)
+	'''
 	pathData = aStar(world,5.5).search()	#weighted aStar
-	pathData = aStar(world,0).search()		#Uniform Cost Search
-
 	IO.display(fileName,world,pathData)
+	
+	pathData = aStar(world,0).search()		#Uniform Cost Search
+	IO.display(fileName,world,pathData)
+	'''
 
 
 # Self Run  ********************************************************************
