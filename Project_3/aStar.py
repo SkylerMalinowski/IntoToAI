@@ -172,10 +172,10 @@ class aStar:
 				# populate openList with new valid cells
 				good = True
 				for listCell in self.openList:
-					if( child.where == listCell.where and child.f > listCell.f ):
+					if( child.where == listCell.where and child.f >= listCell.f ):
 						good = False
 				for listCell in self.closedList:
-					if( child.where == listCell.where and child.f > listCell.f ):
+					if( child.where == listCell.where and child.f >= listCell.f ):
 						good = False
 				if( good == True ):
 					self.openList.append(child)

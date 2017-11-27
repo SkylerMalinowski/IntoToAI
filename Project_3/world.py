@@ -284,10 +284,11 @@ def generate( length, fileName ):
 	blockedCells(world,length)
 	
 	for i in range(10):
-		keyCells(world,length,kCells)
+		world_copy = np.copy(world)
+		keyCells(world_copy,length,kCells)
 		
 		# Save the World for I/O
-		IO.saveFile(world,length,fileName[:-4]+str(i+1)+'.txt',kCells,centers)
+		IO.saveFile(world_copy,length,fileName[:-4]+str(i+1)+'.txt',kCells,centers)
 
 
 # main()  **********************************************************************
