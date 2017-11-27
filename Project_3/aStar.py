@@ -230,10 +230,19 @@ def main():
 
 	pathData, pathList = aStar(world).search()		#standard aStar
 	IO.display(fileName,world,pathData,pathList)
+
+	pathData, pathList = aStar(world,1.5).search()		#weighted aStar weight 1.5
+	IO.display(fileName,world,pathData,pathList)
+
+	pathData, pathList = aStar(world,2.5).search()		#weighted aStar weight 2.5
+	IO.display(fileName,world,pathData,pathList)
+
+	pathData, pathList = aStar(world,0).search()		#Uniform Cost
+	IO.display(fileName,world,pathData,pathList)
 	'''
 	pathData = aStar(world,5.5).search()	#weighted aStar
 	IO.display(fileName,world,pathData)
-	
+
 	pathData = aStar(world,0).search()		#Uniform Cost Search
 	IO.display(fileName,world,pathData)
 	'''

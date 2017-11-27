@@ -62,8 +62,8 @@ def saveFile( world, length, fileName, kCells, centers ):
 # Class  ***********************************************************************
 class CellGrid(Canvas):
 
-	def __init__( self, master, theMap, theData, rowNumber, columnNumber, cellSize, scrollbar ):
-		Canvas.__init__(self, master, width = cellSize * columnNumber , height = cellSize * rowNumber,yscrollcommand=scrollbar)
+	def __init__( self, master, theMap, theData, rowNumber, columnNumber, cellSize):
+		Canvas.__init__(self, master, width = cellSize * columnNumber , height = cellSize * rowNumber)
 		self.pack()
 		self.cellSize = cellSize
 		self.grid = []
@@ -158,7 +158,7 @@ def display( fileName, world, pathData, pathList ):
 	root = Tk()
 	root.title( fileName )
 	vscrollbar = Scrollbar(root)
-	GUI = CellGrid(root,world,pathData,len(world),len(world[0]),size,vscrollbar.set)
+	GUI = CellGrid(root,world,pathData,len(world),len(world[0]),size)
 	pathList = [tu[::-1] for tu in pathList]
 	for i in range(len(pathList)):
 		pathList[i] = tuple(map(size.__mul__,pathList[i]))
@@ -171,7 +171,9 @@ def display( fileName, world, pathData, pathList ):
 	vscrollbar.pack(side=LEFT, fill=Y)
 	GUI.pack(side="left", fill="both", expand=True)
 	GUI.create_window(0,0,window=f, anchor='nw')
-	root.update()
 	GUI.config(scrollregion=GUI.bbox("all"))
+	GUI.config(yscrollcommand=vscrollbar.set)
+	root.update()
+
 
 	root.mainloop()
