@@ -40,6 +40,7 @@ class aStar:
 		self.found = False
 		self.w = weight
 		self.pathList = []
+		self.variable = 1
 		while( len(self.openList) == 0 and self.goal == None ):
 			for row in range(self.length[0]):
 				for col in range(self.length[1]):
@@ -76,38 +77,62 @@ class aStar:
 			# movement cost given terrain
 			if( self.world[p.where[0]][p.where[1]] == '2' ):
 				if( self.world[c.where[0]][c.where[1]] in ['2','b'] ):
-					c.g = p.g + ( m*2 )
+					self.variable = 2
+					c.g = p.g + ( m*self.variable )
+
 				else:
-					c.g = p.g + ( m*1.5 )
+					self.variable = 1.5
+					c.g = p.g + ( m*self.variable )
+
 
 			elif( self.world[p.where[0]][p.where[1]] == 'a' ):
 				if( self.world[c.where[0]][c.where[1]] == 'a' ):
-					c.g = p.g + ( m*(1/4) )
+					self.variable = 0.25
+					c.g = p.g + ( m*self.variable )
+
 				elif( self.world[c.where[0]][c.where[1]] == 'b' ):
-					c.g = p.g + ( m*(3/8) )
+					self.variable = 0.375
+					c.g = p.g + ( m*self.variable )
+
 				elif( self.world[c.where[0]][c.where[1]] == '2' ):
-					c.g = p.g + ( m*1.5 )
+					self.variable = 1.5
+					c.g = p.g + ( m*self.variable )
+
 				else:
-					c.g = p.g + ( m*1 )
+					self.variable = 1
+					c.g = p.g + ( m*self.variable )
+
 
 			elif( self.world[p.where[0]][p.where[1]] == 'b' ):
 				if( self.world[c.where[0]][c.where[1]] == 'a' ):
-					c.g = p.g + ( m*(3/8) )
+					self.variable = 0.375
+					c.g = p.g + ( m*self.variable )
+
 				elif( self.world[c.where[0]][c.where[1]] == 'b' ):
-					c.g = p.g + ( m*(1/2) )
+					self.variable = 0.5
+					c.g = p.g + ( m*self.variable )
+
 				elif( self.world[c.where[0]][c.where[1]] == '2' ):
-					c.g = p.g + ( m*1.5 )
+					self.variable = 1.5
+					c.g = p.g + ( m*self.variable )
+
 				else:
-					c.g = p.g + ( m*1 )
+					self.variable = 1
+					c.g = p.g + ( m*self.variable )
+
 
 			else:
 				if( self.world[c.where[0]][c.where[1]] in ['2','b'] ):
-					c.g = p.g + ( m*1.5 )
+					self.variable = 1.5
+					c.g = p.g + ( m*self.variable )
+
 				else:
-					c.g = p.g + ( m*1 )
+					self.variable = 1
+					c.g = p.g + ( m*self.variable )
+
 
 		def h( c ):
-			c.h = math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2))
+			c.h = self.variable*(math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2)))
 
 		def tracePath( c ):
 			if(self.w == 1):
