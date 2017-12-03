@@ -1,11 +1,9 @@
 
-*.png
+Project_1/__pycache__/
 
-*.txt
+Project_2/__pycache__/
 
-Project 1/__pycache__/
-
-Project 2/__pycache__/
+Project_3/__pycache__/
 
 *.pyc
 
@@ -14,3 +12,7 @@ Project 2/__pycache__/
 Project_2/AI - Report 2\.pdf
 
 *.zip
+
+.directory
+
+*.swp
