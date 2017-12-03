@@ -119,11 +119,11 @@ class aStar:
 			curr = c
 			print("Shortest Path Trace")
 			while( curr.parent != None ):
-				print(curr.where,curr.f,curr.g,curr.h)
+				#print(curr.where,curr.f,curr.g,curr.h)
 				self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
 				self.pathList.append(curr.where)
 				curr = curr.parent
-			print(curr.where,curr.f,curr.g,curr.h)
+			#print(curr.where,curr.f,curr.g,curr.h)
 			self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
 			self.pathList.append(curr.where)
 
@@ -228,24 +228,17 @@ def main():
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
 
-	pathData, pathList = aStar(world).search()		#standard aStar
+	pathData, pathList = aStar(world).search()  # aStar
 	IO.display(fileName,world,pathData,pathList)
 
-	pathData, pathList = aStar(world,1.5).search()		#weighted aStar weight 1.5
+	pathData, pathList = aStar(world,1.5).search()  #weighted aStar weight 1.5
 	IO.display(fileName,world,pathData,pathList)
 
-	pathData, pathList = aStar(world,2.5).search()		#weighted aStar weight 2.5
+	pathData, pathList = aStar(world,2.5).search()  #weighted aStar weight 2.5
 	IO.display(fileName,world,pathData,pathList)
 
-	pathData, pathList = aStar(world,0).search()		#Uniform Cost
+	pathData, pathList = aStar(world,0).search()  #Uniform Cost Search
 	IO.display(fileName,world,pathData,pathList)
-	'''
-	pathData = aStar(world,5.5).search()	#weighted aStar
-	IO.display(fileName,world,pathData)
-
-	pathData = aStar(world,0).search()		#Uniform Cost Search
-	IO.display(fileName,world,pathData)
-	'''
 
 
 # Self Run  ********************************************************************
