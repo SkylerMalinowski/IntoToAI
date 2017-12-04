@@ -29,6 +29,7 @@ class cell:
 	def __str__(self):
 		return str(self.where)
 
+
 class aStar:
 
 	def __init__( self, world, weight=1 ):
@@ -43,7 +44,7 @@ class aStar:
 		self.found = False
 		self.w = weight
 		self.pathList = []
-		self.variable = 1
+		self.variable = 1.
 		while( len(self.openList) == 0 and self.goal == None ):
 			for row in range(self.length[0]):
 				for col in range(self.length[1]):
@@ -55,7 +56,7 @@ class aStar:
 		self.openList[0].h = math.sqrt(math.pow(self.openList[0].where[0]-self.goal[0],2)
 								 + math.pow(self.openList[0].where[1]-self.goal[1],2))
 		# calculate f
-		self.openList[0].f = self.w*self.openList[0].h
+		self.openList[0].f = self.openList[0].h
 
 	def search( self ):
 
@@ -257,6 +258,7 @@ def main():
 		['0','0','0','0','0','g']
 	]
 	
+	i = 0
 	tic = []
 	toc = []
 	
@@ -267,20 +269,22 @@ def main():
 	pathData, pathList = aStar(world,0).search()  # Uniform Cost Search
 	#IO.display(fileName,world,pathData,pathList)
 	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[0] - tic[0] )
+	print( "Elapsed Time =", toc[i] - tic[i] )
 	
+	i += 1
 	tic.append( time.clock() )
 	pathData, pathList = aStar(world).search()  # aStar
 	#IO.display(fileName,world,pathData,pathList)
 	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[0] - tic[0] )
+	print( "Elapsed Time =", toc[i] - tic[i] )
 	
 	for w in [1.2,1.25,1.3,1.35,1.4]:
+		i += 1
 		tic.append( time.clock() )
 		pathData, pathList = aStar(world,w).search()  # aStar
 		#IO.display(fileName,world,pathData,pathList)
 		toc.append( time.clock() )
-		print( "Elapsed Time =", toc[0] - tic[0] )
+		print( "Elapsed Time =", toc[i] - tic[i] )
 
 
 # Self Run  ********************************************************************
