@@ -7,6 +7,7 @@
 
 import sys
 import math
+import time
 import heapq
 import operator
 
@@ -31,6 +32,8 @@ class cell:
 class aStar:
 
 	def __init__( self, world, weight=1 ):
+		self.nodes_expanded = 0
+		self.nodes_considered = 0
 		self.world = world
 		self.goal = None
 		self.length = [len(world),len(world[0])]
@@ -142,7 +145,7 @@ class aStar:
 			if(self.w == 0):
 				print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
 			curr = c
-			print("Shortest Path Trace")
+			#print("Shortest Path Trace")
 			while( curr.parent != None ):
 				#print(curr.where,curr.f,curr.g,curr.h)
 				self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
@@ -207,6 +210,8 @@ class aStar:
 					print("Path Found")
 					tracePath(child)
 					self.found = True
+					print("Nodes Expanded =",self.nodes_expanded)
+					print("Nodes Considered =",self.nodes_considered)
 					return
 
 				# populate openList with new valid cells
@@ -219,6 +224,7 @@ class aStar:
 						good = False
 				if( good == True ):
 					self.openList.append(child)
+					self.nodes_considered += 1
 
 		# main()
 		while( len(self.openList) != 0 ):
@@ -231,6 +237,7 @@ class aStar:
 			if( self.found == False ):
 				successors(q)
 			self.closedList.append(q)
+			self.nodes_expanded += 1
 
 		if( self.found == False ):
 			print("Path Not Found")
@@ -249,21 +256,31 @@ def main():
 		['1','1','1','1','0','1'],
 		['0','0','0','0','0','g']
 	]
-
+	
+	tic = []
+	toc = []
+	
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
-
+	
+	tic.append( time.clock() )
+	pathData, pathList = aStar(world,0).search()  # Uniform Cost Search
+	#IO.display(fileName,world,pathData,pathList)
+	toc.append( time.clock() )
+	print( "Elapsed Time =", toc[0] - tic[0] )
+	
+	tic.append( time.clock() )
 	pathData, pathList = aStar(world).search()  # aStar
-	IO.display(fileName,world,pathData,pathList)
-
-	pathData, pathList = aStar(world,1.5).search()  #weighted aStar weight 1.5
-	IO.display(fileName,world,pathData,pathList)
-
-	pathData, pathList = aStar(world,2.5).search()  #weighted aStar weight 2.5
-	IO.display(fileName,world,pathData,pathList)
-
-	pathData, pathList = aStar(world,0).search()  #Uniform Cost Search
-	IO.display(fileName,world,pathData,pathList)
+	#IO.display(fileName,world,pathData,pathList)
+	toc.append( time.clock() )
+	print( "Elapsed Time =", toc[0] - tic[0] )
+	
+	for w in [1.2,1.25,1.3,1.35,1.4]:
+		tic.append( time.clock() )
+		pathData, pathList = aStar(world,w).search()  # aStar
+		#IO.display(fileName,world,pathData,pathList)
+		toc.append( time.clock() )
+		print( "Elapsed Time =", toc[0] - tic[0] )
 
 
 # Self Run  ********************************************************************

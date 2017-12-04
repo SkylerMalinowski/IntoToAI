@@ -48,18 +48,18 @@ Shortest Path Length: 94.00178566873412
 There are few points of optimality in context of pathfinding search algorithms.
 \begin{itemize}
   \item A prioity queue on the open list with \(f(n)\) being the priority factor. This is to ensure that the algorithm is not uselessly expanding nodes that with higher probability will not lead to optimal solution.
-  \item Making sure the heuristic does not overestimate. If it does, then the algorithm is no longer admissable as a heuristic, ergo the optimal path is no longer guaranteed.
-  \item Fine tuning weight coefficients in \(f(n) = w_1*g(n) + w_2*h(n)\). By doing such, \(f\) can altered and thus optimized.
+  \item Making sure the heuristic does not overestimate. If it does, then the algorithm is no longer admissable as a heuristic, ergo the optimal path is no longer guaranteed. In an effort to ensure never overestimating, the heuristic is modified by 
 \end{itemize}
+
 
 \section{Part D}
 % Propose different types of heuristics for the considered problem and discuss them in your report. In particular:
 % • Propose the best admissible/consistent heuristic that you can come up with in this grid world.
 % • Propose at least four other heuristics, which can be inadmissible but still useful for this problem and justify your choices.
 % Remember that good heuristics can effectively guide the exploration process of a search algorithm towards finding a good solution fast and they are computationally inexpensive to compute. (10 points)
-Euclidean Distance
-\newline
 Manhattan Distance
+\newline
+Euclidean Distance
 \newline
 Diagonal Distance
 
@@ -68,7 +68,7 @@ Diagonal Distance
 
 
 \section{Part F}
-%  Explain your results and discuss in detail your observations regarding the relative performance of the different methods. What impact do you perceive that different heuristic functions have on the behavior of the algorithms and why? What is the relative performance of the different algorithms and why? (10 points)
+% Explain your results and discuss in detail your observations regarding the relative performance of the different methods. What impact do you perceive that different heuristic functions have on the behavior of the algorithms and why? What is the relative performance of the different algorithms and why? (10 points)
 
 
 \section{Part G}
