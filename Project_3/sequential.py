@@ -15,7 +15,6 @@ import numpy as np
 
 import IO
 
-
 # class  ***********************************************************************
 class cell:
 
@@ -26,39 +25,44 @@ class cell:
 		self.g = 0.
 		self.h = 0.
 
-	def __str__(self):
-		return str(self.where)
 
-
-class aStar:
-
-	def __init__( self, world, weight=1 ):
-		self.nodes_expanded = 0
-		self.nodes_considered = 0
+class sequential:
+	
+	def __init__( self, world, weight=[1.,1.] ):
 		self.world = world
-		self.goal = None
 		self.length = [len(world),len(world[0])]
-		self.pathData = np.zeros(shape=(self.length[0],self.length[1],5))
+		self.goal = None
+		self.nodes_expanded = []
+		self.nodes_considered = []
+		self.pathList = []
 		self.openList = []
 		self.closedList = []
-		self.found = False
+		self.found = []
+		for i in range(5):
+			self.nodes_expanded.append(0)
+			self.nodes_considered.append(0)
+			self.openList.append([])
+			self.closedList.append([])
+			self.found.append(False)
 		self.w = weight
-		self.pathList = []
-		while( len(self.openList) == 0 and self.goal == None ):
+		while( len(self.openList) == 5 and self.goal == None ):
 			for row in range(self.length[0]):
 				for col in range(self.length[1]):
 					if( world[row][col] == 's' ):
-						self.openList.append(cell(row,col))
-					elif(  world[row][col] == 'g' ):
+						for i in range(len(self.openList)):
+							self.openList[i].append(cell(row,col))
+					elif( world[row][col] == 'g' ):
 						self.goal = (row,col)
-		# calculate h
-		self.openList[0].h = 0.25 * math.sqrt(math.pow(self.openList[0].where[0]-self.goal[0],2)
-								 + math.pow(self.openList[0].where[1]-self.goal[1],2))
-		# calculate f
-		self.openList[0].f = self.openList[0].h
+		for i in range(len(self.openList)):
+			# calculate h
+			self.openList[i][0].h = 0.25 * math.sqrt(math.pow(self.openList[i][0].where[0]-self.goal[0],2)
+									+ math.pow(self.openList[i][0].where[1]-self.goal[1],2))
+			# calculate f
+			self.openList[i][0].f = self.openList[i][0].h
+
 
 	def search( self ):
-
+		
 		def heapsort( cellList ):
 			heap = []
 			for cell in cellList:
@@ -110,28 +114,30 @@ class aStar:
 				else:
 					c.g = p.g + ( m*1 )
 
-		def h( c ):
-			c.h = 0.25 * (math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2)))
+		def h( c, i ):
+			if( i == 1 ):
+				c.h = 0.25 math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
+			if( i == 2 ):
+				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
+			if( i == 3 ):
+				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
+			if( i == 4 ):
+				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
+			else:
+				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
 
 		def tracePath( c ):
-			if(self.w == 1):
-				print("Shortest Movement Path Cost =",c.g)
-			if(self.w > 1):
-				print("Shortest Movement Path Cost with weight {} =".format(self.w),c.g)
-			if(self.w == 0):
-				print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
+			print("Shortest Movement Path Cost with weights {} =".format(self.w),c.g)
 			curr = c
 			#print("Shortest Path Trace")
 			while( curr.parent != None ):
 				#print(curr.where,curr.f,curr.g,curr.h)
-				self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
 				self.pathList.append(curr.where)
 				curr = curr.parent
 			#print(curr.where,curr.f,curr.g,curr.h)
-			self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
 			self.pathList.append(curr.where)
 
-		def successors( parent ):
+		def successors( parent, index ):
 			s = []
 
 			# Top Left
@@ -171,53 +177,50 @@ class aStar:
 			if(parent.where[0]-1 >= 0 and parent.where[0]-1 < self.length[0]
 			and parent.where[1]+1 >= 0 and parent.where[1]+1 < self.length[1]
 			and self.world[parent.where[0]-1][parent.where[1]+1] != '0'):
-				s.append(cell(q.where[0]-1,parent.where[1]+1,parent))
+				s.append(cell(parent.where[0]-1,parent.where[1]+1,parent))
 
 			for child in s:
 				# calculate g
 				g(parent,child)
 				# calculate h
-				h(child)
+				h(child,index)
 				# calculate f
-				child.f = child.g + self.w*child.h
-
-				# Goal Found
-				if(self.world[child.where[0]][child.where[1]] == 'g'):
-					print("Path Found")
-					tracePath(child)
-					self.found = True
-					print("Nodes Expanded =",self.nodes_expanded)
-					print("Nodes Considered =",self.nodes_considered)
-					return
-
+				child.f = child.g + self.w[0] * child.h
 				# populate openList with new valid cells
 				good = True
-				for listCell in self.openList:
+				for listCell in self.openList[index]:
 					if( child.where == listCell.where and child.f >= listCell.f ):
 						good = False
-				for listCell in self.closedList:
+				for listCell in self.closedList[index]:
 					if( child.where == listCell.where and child.f >= listCell.f ):
 						good = False
 				if( good == True ):
-					self.openList.append(child)
-					self.nodes_considered += 1
-
+					self.nodes_considered[index] += 1
+					self.openList[index].append(child)
+		
 		# main()
-		while( len(self.openList) != 0 ):
-			# find smallest 'f' in openList
-			self.openList = heapsort(self.openList)
-			# pop the smallest 'f'
-			q = self.openList.pop(0)
-			self.pathData[q.where[0]][q.where[1]] = [q.where[0],q.where[1],q.f,q.g,q.h]
-			# generate successors
-			if( self.found == False ):
-				successors(q)
-			self.closedList.append(q)
-			self.nodes_expanded += 1
-
-		if( self.found == False ):
-			print("Path Not Found")
-		return self.pathData, self.pathList
+		while( len(self.openList[0]) != 0 ):
+			for i in range(1,len(self.openList)):
+				self.openList[0] = heapsort(self.openList[0])
+				self.openList[i] = heapsort(self.openList[i])
+				if( self.openList[i][0].f <= self.w[1]*self.openList[0][0].f ):
+					if( self.openList[i][0].where == self.goal ):
+						tracePath(self.openList[i][0])
+						return self.pathList,i
+					else:
+						s = self.openList[i].pop(0)
+						successors(s,i)
+						self.nodes_expanded[i] += 1
+						self.closedList[i].append(s)
+				else:
+					if( self.openList[0][0].where == self.goal ):
+						tracePath(self.openList[0][0])
+						return self.pathList,i
+					else:
+						s = self.openList[0].pop(0)
+						successors(s,0)
+						self.nodes_expanded[0] += 1
+						self.closedList[0].append(s)
 
 
 # main()  **********************************************************************
@@ -233,33 +236,18 @@ def main():
 		['0','0','0','0','0','g']
 	]
 	
-	i = 0
 	tic = []
 	toc = []
 	
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
 	
-	tic.append( time.clock() )
-	pathData, pathList = aStar(world,0).search()  # Uniform Cost Search
-	#IO.display(fileName,world,pathData,pathList)
-	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[i] - tic[i] )
-	
-	i += 1
-	tic.append( time.clock() )
-	pathData, pathList = aStar(world).search()  # aStar
-	#IO.display(fileName,world,pathData,pathList)
-	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[i] - tic[i] )
-	
-	for w in [1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0]:
-		i += 1
-		tic.append( time.clock() )
-		pathData, pathList = aStar(world,w).search()  # aStar
-		#IO.display(fileName,world,pathData,pathList)
-		toc.append( time.clock() )
-		print( "Elapsed Time =", toc[i] - tic[i] )
+	w = [1.,1.]
+	tic = time.clock()
+	pathList,index = sequential(world,w).search()
+	toc = time.clock()
+	print( "Elapsed Time = " + str(toc - tic) + " sec" )
+	print(index)
 
 
 # Self Run  ********************************************************************
