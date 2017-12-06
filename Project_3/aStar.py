@@ -248,6 +248,7 @@ def main():
 	results = []
 	fileName = sys.argv[1]
 	os.chdir("maps")
+	row = 0
 	for fileName in glob.glob("*.txt"):
 		line = []
 		line.append(fileName)
@@ -291,15 +292,12 @@ def main():
 			toc.append( time.clock() )
 			print( "Elapsed Time =", toc[i] - tic[i] )
 			line.append(toc[i] - tic[i])
-		results.append(line)
-		print(line)
-	# Start from the first cell. Rows and columns are zero indexed.
-	row = 0
-	# Iterate over the data and write it out row by row.
-	for item in results:
-		for col in range(len(item)):
-			worksheet.write(row, col, item[col])
+
+		for col in range(len(line)):
+			worksheet.write(row, col, lin[col])
 			row += 1
+	# Start from the first cell. Rows and columns are zero indexed.
+	# Iterate over the data and write it out row by row.
 
 	# Write a total using a formula.
 
