@@ -5,15 +5,17 @@
 # CS 440
 # **************************************************************************** #
 
-import sys
+import sys, glob, os
 import math
 import time
 import heapq
 import operator
+import xlsxwriter
 
 import numpy as np
 
 import IO
+
 
 # class  ***********************************************************************
 class cell:
@@ -38,6 +40,7 @@ class sequential:
 		self.openList = []
 		self.closedList = []
 		self.found = []
+		self.g = 0
 		for i in range(5):
 			self.nodes_expanded.append(0)
 			self.nodes_considered.append(0)
@@ -129,6 +132,7 @@ class sequential:
 		def tracePath( c, i ):
 			print("Shortest Movement Path Cost with weights {} =".format(self.w),c.g)
 			curr = c
+			self.g = curr.g
 			#print("Shortest Path Trace")
 			while( curr.parent != None ):
 				#print(curr.where,curr.f,curr.g,curr.h)
@@ -136,8 +140,11 @@ class sequential:
 				curr = curr.parent
 			#print(curr.where,curr.f,curr.g,curr.h)
 			self.pathList.append(curr.where)
-			print("Nodes Expanded =",self.nodes_expanded[i])
-			print("Nodes Considered =",self.nodes_considered[i])
+			'''
+			for i in range(5):
+				print(i,"Nodes Expanded =",self.nodes_expanded[i])
+				print(i,"Nodes Considered =",self.nodes_considered[i])
+			'''
 
 		def successors( parent, index ):
 			s = []
@@ -208,7 +215,7 @@ class sequential:
 				if( self.openList[i][0].f <= self.w[1]*self.openList[0][0].f ):
 					if( self.openList[i][0].where == self.goal ):
 						tracePath(self.openList[i][0],i)
-						return self.pathList,i
+						return self.pathList,i,self.nodes_expanded,self.nodes_considered,self.g
 					else:
 						s = self.openList[i].pop(0)
 						successors(s,i)
@@ -217,7 +224,7 @@ class sequential:
 				else:
 					if( self.openList[0][0].where == self.goal ):
 						tracePath(self.openList[0][0],0)
-						return self.pathList,0
+						return self.pathList,0,self.nodes_expanded,self.nodes_considered,self.g
 					else:
 						s = self.openList[0].pop(0)
 						successors(s,0)
@@ -237,7 +244,7 @@ def main():
 		['1','1','1','1','0','1'],
 		['0','0','0','0','0','g']
 	]
-	
+	'''
 	tic = []
 	toc = []
 	
@@ -246,9 +253,49 @@ def main():
 	
 	w = [1.5,1.5]
 	tic = time.clock()
-	pathList,index = sequential(world,w).search()
+	pathList,index,nodes_expanded,nodes_considered = sequential(world,w).search()
 	toc = time.clock()
-	print( "Elapsed Time = " + str(toc - tic) + " sec" )
+	print( index, "Elapsed Time = " + str(toc - tic) + " sec" )
+	'''
+	workbook = xlsxwriter.Workbook('Output.xlsx')
+	worksheet = workbook.add_worksheet()
+	
+	results = []
+	fileName = sys.argv[1]
+	os.chdir("maps")
+	row = 0
+	for fileName in glob.glob("*.txt"):
+		line = []
+		line.append(fileName)  # 0
+		print(fileName)
+		world,length,kCells,Centers = IO.readFile(fileName)
+		
+		weights = [2,1.25]
+		tic = time.clock()
+		pathData,index,opened,considered,pathcost = sequential(world,weights).search()
+		line.append(index)  # 1
+		line.append(pathcost)  # 2
+		line.append(weights[0])  # 3
+		line.append(weights[1])  # 4
+		for i in range(len(opened)):
+			line.append(opened[i])  # 5-9
+		for i in range(len(considered)):
+			line.append(considered[i])  # 10-14
+		#IO.display(fileName,world,pathData,pathList)
+		toc = time.clock()
+		print( index, "Elapsed Time = " + str(toc - tic) + " sec" )
+		line.append(toc - tic)  # 15
+
+		for col in range(len(line)):
+			worksheet.write(row, col, line[col])
+		row += 1
+		
+	# Start from the first cell. Rows and columns are zero indexed.
+	# Iterate over the data and write it out row by row.
+
+	# Write a total using a formula.
+	
+	workbook.close()
 
 
 # Self Run  ********************************************************************
