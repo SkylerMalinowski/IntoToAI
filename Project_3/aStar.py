@@ -14,6 +14,7 @@ import operator
 import numpy as np
 import IO
 import glob, os
+from random import shuffle
 import xlsxwriter
 
 # class  ***********************************************************************
@@ -32,7 +33,8 @@ class cell:
 
 class aStar:
 
-	def __init__( self, world, weight=1 ):
+	def __init__( self, world, weight=1, heuristic=0):
+		self.heuristic = heuristic
 		self.g = 0
 		self.nodes_expanded = 0
 		self.nodes_considered = 0
@@ -111,8 +113,17 @@ class aStar:
 				else:
 					c.g = p.g + ( m*1 )
 
-		def h( c):
-			c.h = 0.25 * (math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2)))
+		def h( c, i=0 ):
+			if( i == 1 ):  # Raw Manhattan Distance -- Inadmissable
+				c.h = math.fabs(c.where[0]-self.goal[0]) + math.fabs(c.where[1]-self.goal[1])
+			elif( i == 2 ):  # Raw Chebyshev Distance -- Inadmissable
+				c.h = max(math.fabs(c.where[0]-self.goal[0]), math.fabs(c.where[1]-self.goal[1]))
+			elif( i == 3 ):  # Custom Manhattan Distance -- Inadmissable
+				c.h = 0.25 * math.fabs(c.where[0]-self.goal[0]) + math.fabs(c.where[1]-self.goal[1])
+			elif( i == 4 ):  # Custom Chebyshev Distance -- Admissable
+				c.h = 0.25 * max(math.fabs(c.where[0]-self.goal[0]), math.fabs(c.where[1]-self.goal[1]))
+			else:  # Custom Euclidean Distance -- Admissable
+				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
 
 		def tracePath( c ):
 			if(self.w == 1):
@@ -183,7 +194,7 @@ class aStar:
 				# calculate g
 				g(parent,child)
 				# calculate h
-				h(child)
+				h(child,self.heuristic)
 				# calculate f
 				child.f = child.g + self.w*child.h
 
@@ -242,21 +253,25 @@ def main():
 	# 	['0','0','0','0','0','g']
 	# ]
 
-	i = 0
+
 	tic = []
 	toc = []
 	results = []
 	fileName = sys.argv[1]
 	os.chdir("maps")
 	row = 0
-	for fileName in glob.glob("*.txt"):
+	count = 0
+	filelist = glob.glob("*.txt")
+	shuffle(filelist)
+	for fileName in filelist:
+
+		i = 0
+		tic = []
+		toc = []
 		line = []
 		line.append(fileName)
 		print(fileName)
-		heuristics = []
-		#for h in heuristics:
-		#line.append(h)
-		line.append('standard')
+
 		world,length,kCells,Centers = IO.readFile(fileName)
 
 		tic.append( time.clock() )
@@ -269,22 +284,13 @@ def main():
 		print( "Elapsed Time =", toc[i] - tic[i] )
 		line.append(toc[i] - tic[i])
 
-		i += 1
-		tic.append( time.clock() )
-		pathData, pathList, opened, considered, pathcost, weight = aStar(world).search()  # aStar
-		line.append(pathcost)
-		line.append(opened)
-		line.append(considered)
-		#IO.display(fileName,world,pathData,pathList)
-		toc.append( time.clock() )
-		print( "Elapsed Time =", toc[i] - tic[i] )
-		line.append(toc[i] - tic[i])
-
-		for w in [1.5,2.0]:
+		heuristics = {0:"Custom Euclidean Distance -- Admissable",1:"Raw Manhattan Distance -- Inadmissable",2:"Raw Chebyshev Distance -- Inadmissable",3:"Custom Manhattan Distance -- Inadmissable",4:"Custom Chebyshev Distance -- Admissable"}
+		for h in heuristics.keys():
+			line.append(heuristics[h])
+			print(heuristics[h])
 			i += 1
 			tic.append( time.clock() )
-			pathData, pathList, opened, considered, pathcost, weight = aStar(world,w).search()  # aStar
-			line.append(weight)
+			pathData, pathList, opened, considered, pathcost, weight = aStar(world,1,h).search()  # aStar
 			line.append(pathcost)
 			line.append(opened)
 			line.append(considered)
@@ -293,9 +299,23 @@ def main():
 			print( "Elapsed Time =", toc[i] - tic[i] )
 			line.append(toc[i] - tic[i])
 
+			for w in [1.5,2.0]:
+				i += 1
+				tic.append( time.clock() )
+				pathData, pathList, opened, considered, pathcost, weight = aStar(world,w,h).search()  # aStar
+				line.append(weight)
+				line.append(pathcost)
+				line.append(opened)
+				line.append(considered)
+				#IO.display(fileName,world,pathData,pathList)
+				toc.append( time.clock() )
+				print( "Elapsed Time =", toc[i] - tic[i] )
+				line.append(toc[i] - tic[i])
+
 		for col in range(len(line)):
-			worksheet.write(row, col, lin[col])
-			row += 1
+			worksheet.write(row, col, line[col])
+		row+= 1
+		print(row)
 	# Start from the first cell. Rows and columns are zero indexed.
 	# Iterate over the data and write it out row by row.
 
