@@ -47,8 +47,8 @@ Shortest Path Length: 94.00178566873412
 % Optimize your implementation of the above algorithms. Discuss your optimizations in your report. (10 points)
 There are few points of optimality in context of pathfinding search algorithms.
 \begin{itemize}
-  \item A prioity queue on the open list with \(f(n)\) being the priority factor. This is to ensure that the algorithm is not uselessly expanding nodes that with higher probability will not lead to optimal solution.
-  \item Making sure the heuristic does not overestimate. If it does, then the algorithm is no longer admissable as a heuristic, ergo the optimal path is no longer guaranteed. In an effort to ensure never overestimating, the heuristic is modified by 
+  \item A prioity queue on the open list with \(f(n)\) being the priority factor. This is to ensure that the algorithm is not uselessly expanding nodes that with higher probability will not lead to optimal solution. To do this we implemented the priority queue for the open list as a Binary Heap which naturally orders its contents in ascending order so that the first item popped off of the queue is the largest in value. This saves time and memory by not having to search through the open list to find the largest \(f(n)\) value.
+  \item Making sure the heuristic does not overestimate. If it does, then the algorithm is no longer admissable as a heuristic, ergo the optimal path is no longer guaranteed. In an effort to ensure it never overestimates, the heuristic is modified by the best case movement cost for the world in question. For such a modification to actually result in an admissible heuristic the unmodified heuristic must agree on the degrees of freedom of movement of the agent for the world in question. 
 \end{itemize}
 
 
@@ -57,11 +57,27 @@ There are few points of optimality in context of pathfinding search algorithms.
 % • Propose the best admissible/consistent heuristic that you can come up with in this grid world.
 % • Propose at least four other heuristics, which can be inadmissible but still useful for this problem and justify your choices.
 % Remember that good heuristics can effectively guide the exploration process of a search algorithm towards finding a good solution fast and they are computationally inexpensive to compute. (10 points)
-Manhattan Distance
+These are the Heuristics we implemented, where Modified indicates that it was multiplied by the lowest terrain travel cost coefficient and Raw means it is the standard implementation of that Heuristic without a coefficient
+\subsection{Modified Euclidean Distance}
+ \[ h = (0.25) * \sqrt{ (x_{current} - x_{goal})^2 + (y_{current} - y_{goal})^2}\]
 \newline
-Euclidean Distance
+ Admissible because it underestimates the distance to the goal by assuming that it will be traveling on river tiles the entire path and because it accounts for full freedom of movement for our agent
+\subsection{Modified Chebyshev Distance}
+  \[ h = (0.25) * \max( | x_{current} - x_{goal} |, | y_{current} - y_{goal} | )\]
 \newline
-Diagonal Distance
+Admissible because it underestimates the distance to the goal by assuming that it will be traveling on river tiles the entire path and because it accounts for full freedom of movement for our agent
+\subsection{Modified Manhattan Distance}
+\[ h = (0.25) * ( | x_{current} - x_{goal} | + | y_{current} - y_{goal} | )\]
+\newline
+Inadmissible because while it underestimates the distance to the goal by assuming that it will be traveling on river tiles the entire path it does not account for the full freedom of movement our agent has in our world
+\subsection{Raw Chebyshev Distance}
+ \[ h = \max( | x_{current} - x_{goal} |, | y_{current} - y_{goal} | )\]
+\newline
+Inadmissible because it does not underestimate the distance to the goal even though it does account for the full freedom of movement of our agent
+\subsection{Raw Manhattan Distance}
+\[ h =  ( | x_{current} - x_{goal} | + | y_{current} - y_{goal} | )\] 
+Inadmissible because it does not underestimate the distance to the goal and it does not account for the full freedom of movement of our agent
+
 
 \section{Part E}
 % Perform an experimental evaluation on the 50 benchmarks using the three algorithms that you have implemented for the 5 different heuristics that you have considered. For Weighted A∗ you should try at least two w values, e.g., 1.25 and 2 (feel free to experiment). Compare the various solutions in terms of average run-time, average resulting path lengths as a function of the optimum length, average number of nodes expanded and memory requirements (average over all 50 benchmarks). In your report, provide your experimental results. (15 points)
