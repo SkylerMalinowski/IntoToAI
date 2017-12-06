@@ -12,9 +12,9 @@ import heapq
 import operator
 
 import numpy as np
-
 import IO
-
+import glob, os
+import xlsxwriter
 
 # class  ***********************************************************************
 class cell:
@@ -33,6 +33,7 @@ class cell:
 class aStar:
 
 	def __init__( self, world, weight=1 ):
+		self.g = 0
 		self.nodes_expanded = 0
 		self.nodes_considered = 0
 		self.world = world
@@ -110,16 +111,19 @@ class aStar:
 				else:
 					c.g = p.g + ( m*1 )
 
-		def h( c ):
+		def h( c):
 			c.h = 0.25 * (math.sqrt(math.pow(c.where[0]-self.goal[0],2) + math.pow(c.where[1]-self.goal[1],2)))
 
 		def tracePath( c ):
 			if(self.w == 1):
 				print("Shortest Movement Path Cost =",c.g)
+				self.g = c.g
 			if(self.w > 1):
 				print("Shortest Movement Path Cost with weight {} =".format(self.w),c.g)
+				self.g = c.g
 			if(self.w == 0):
 				print("Shortest Movement Path Cost for Uniform Cost Search =",c.g)
+				self.g = c.g
 			curr = c
 			#print("Shortest Path Trace")
 			while( curr.parent != None ):
@@ -130,6 +134,8 @@ class aStar:
 			#print(curr.where,curr.f,curr.g,curr.h)
 			self.pathData[curr.where[0]][curr.where[1]] = [curr.where[0],curr.where[1],curr.f,curr.g,curr.h]
 			self.pathList.append(curr.where)
+
+
 
 		def successors( parent ):
 			s = []
@@ -217,50 +223,87 @@ class aStar:
 
 		if( self.found == False ):
 			print("Path Not Found")
-		return self.pathData, self.pathList
+		return self.pathData, self.pathList, self.nodes_expanded, self.nodes_considered, self.g, self.w
 
 
 # main()  **********************************************************************
 def main():
 
-	world = [
-		['s','1','1','1','1','1'],
-		['0','1','0','0','0','1'],
-		['0','1','0','0','0','1'],
-		['1','1','0','1','1','1'],
-		['1','0','0','1','0','1'],
-		['1','1','1','1','0','1'],
-		['0','0','0','0','0','g']
-	]
-	
+	workbook = xlsxwriter.Workbook('Output.xlsx')
+	worksheet = workbook.add_worksheet()
+
+	# world = [
+	# 	['s','1','1','1','1','1'],
+	# 	['0','1','0','0','0','1'],
+	# 	['0','1','0','0','0','1'],
+	# 	['1','1','0','1','1','1'],
+	# 	['1','0','0','1','0','1'],
+	# 	['1','1','1','1','0','1'],
+	# 	['0','0','0','0','0','g']
+	# ]
+
 	i = 0
 	tic = []
 	toc = []
-	
+	results = []
 	fileName = sys.argv[1]
-	world,length,kCells,Centers = IO.readFile(fileName)
-	
-	tic.append( time.clock() )
-	pathData, pathList = aStar(world,0).search()  # Uniform Cost Search
-	#IO.display(fileName,world,pathData,pathList)
-	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[i] - tic[i] )
-	
-	i += 1
-	tic.append( time.clock() )
-	pathData, pathList = aStar(world).search()  # aStar
-	#IO.display(fileName,world,pathData,pathList)
-	toc.append( time.clock() )
-	print( "Elapsed Time =", toc[i] - tic[i] )
-	
-	for w in [1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0]:
-		i += 1
+	os.chdir("maps")
+	for fileName in glob.glob("*.txt"):
+		line = []
+		line.append(fileName)
+		print(fileName)
+		heuristics = []
+		#for h in heuristics:
+		#line.append(h)
+		line.append('standard')
+		world,length,kCells,Centers = IO.readFile(fileName)
+
 		tic.append( time.clock() )
-		pathData, pathList = aStar(world,w).search()  # aStar
+		pathData, pathList, opened, considered, pathcost, weight = aStar(world,0).search()  # Uniform Cost Search
+		line.append(pathcost)
+		line.append(opened)
+		line.append(considered)
 		#IO.display(fileName,world,pathData,pathList)
 		toc.append( time.clock() )
 		print( "Elapsed Time =", toc[i] - tic[i] )
+		line.append(toc[i] - tic[i])
 
+		i += 1
+		tic.append( time.clock() )
+		pathData, pathList, opened, considered, pathcost, weight = aStar(world).search()  # aStar
+		line.append(pathcost)
+		line.append(opened)
+		line.append(considered)
+		#IO.display(fileName,world,pathData,pathList)
+		toc.append( time.clock() )
+		print( "Elapsed Time =", toc[i] - tic[i] )
+		line.append(toc[i] - tic[i])
+
+		for w in [1.5,2.0]:
+			i += 1
+			tic.append( time.clock() )
+			pathData, pathList, opened, considered, pathcost, weight = aStar(world,w).search()  # aStar
+			line.append(weight)
+			line.append(pathcost)
+			line.append(opened)
+			line.append(considered)
+			#IO.display(fileName,world,pathData,pathList)
+			toc.append( time.clock() )
+			print( "Elapsed Time =", toc[i] - tic[i] )
+			line.append(toc[i] - tic[i])
+		results.append(line)
+		print(line)
+	# Start from the first cell. Rows and columns are zero indexed.
+	row = 0
+	# Iterate over the data and write it out row by row.
+	for item in results:
+		for col in range(len(item)):
+			worksheet.write(row, col, item[col])
+			row += 1
+
+	# Write a total using a formula.
+
+	workbook.close()
 
 # Self Run  ********************************************************************
 if( __name__ == "__main__" ):
