@@ -45,12 +45,12 @@ Shortest Path Length: 94.00178566873412
 
 \section{Part C}
 % Optimize your implementation of the above algorithms. Discuss your optimizations in your report. (10 points)
-There are few points of optimality in context of pathfinding search algorithms.
+There were few points of optimizations made to our algorithms.
 \begin{itemize}
   \item A prioity queue on the open list with \(f(n)\) being the priority factor. This is to ensure that the algorithm is not uselessly expanding nodes that with higher probability will not lead to optimal solution. To do this we implemented the priority queue for the open list as a Binary Heap which naturally orders its contents in ascending order so that the first item popped off of the queue is the largest in value. This saves time and memory by not having to search through the open list to find the largest \(f(n)\) value.
-  \item Making sure the heuristic does not overestimate. If it does, then the algorithm is no longer admissable as a heuristic, ergo the optimal path is no longer guaranteed. In an effort to ensure it never overestimates, the heuristic is modified by the best case movement cost for the world in question. For such a modification to actually result in an admissible heuristic the unmodified heuristic must agree on the degrees of freedom of movement of the agent for the world in question. 
+  \item Making sure the heuristic is admissible. In an effort to ensure it never overestimates, the heuristic is modified by the best case movement cost for the world in question. Also the base heuristicmust have the right amount of degrees of freedom. Because our agent can move in eight directions, the heuristic chosen must also have that as its minimum degrees of freedom to have a better solutions arrived at. If either is breached, so is admissibility.
+  \item Making a modular implementation of A*. To achieve such, Python imheritance was leveraged, weights were inserted, and functions were used to ensure a scalable and modular implementation.
 \end{itemize}
-
 
 \section{Part D}
 % Propose different types of heuristics for the considered problem and discuss them in your report. In particular:
@@ -90,39 +90,54 @@ Inadmissible because it does not underestimate the distance to the goal and it d
 % Implement the Sequential Heuristic A∗. Use an admissible heuristic for the anchor search. Use 4 other heuristics, admissible or inadmissible ones, for the remaining search processes. You should try at least two w1 and two w2 values, e.g., 1.25 and 2 (feel free to experiment). Make choices so as to optimize the performance of the algorithm, i.e., aim for solutions that compute as high-quality solutions and as fast as possible.
 % Perform an experimental evaluation over the 50 benchmarks you have considered above. In particular, compare the A∗ approach with the admissible heuristic against the Sequential Heuristic version, which utilizes all the heuristics you have considered. Compare the various solutions in terms of average runtime, average resulting path lengths as a function of the optimum length, average number of nodes expanded and memory requirements (average over all 50 benchmarks). In your report, provide your experimental results. (15 points)
 The admissable heuristic chosen for the anchor search was a modified Euclidean. The other heuristics chosen were as disccussed in Part C. As for weights, our weight sets chosen were \([w_1,w_2] = [1.25,2],[2,1.25]\).
-\newline
-\newline
-Table of Averages
-\newline
+
+\subsection{Table of Averages -- Weights = [1.25, 2]}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-	Heuristic & Weights & Nodes Expanded & Nodes Considered & Elapsed Time\\
+	Heuristic & Weights & Nodes Expanded & Nodes Considered\\
 \hline
-	Modified Euclidean & [1.25,2] &  &  & \\
+	Modified Euclidean & [1.25, 2] & 7695.7 & 8191.5\\
 \hline
-	Modified Euclidean & [2,1.25] &  &  & \\
+	Raw Manhattan & [1.25, 2] & 1 & 6.3\\
 \hline
-	Raw Manhattan & [1.25,2] &  &  & \\
+	Raw Chebyshev & [1.25, 2] & 2501.4 & 3277.4\\
 \hline
-	Raw Manhattan & [2,1.25] &  &  & \\
+	Modified Manhattan & [1.25, 2] & 1251.4 & 1504.1\\
 \hline
-	Raw Chebyshev & [1.25,2] &  &  & \\
-\hline
-	Raw Chebyshev & [2,1.25] &  &  & \\
-\hline
-	Modified Manhattan & [1.25,2] &  &  & \\
-\hline
-	Modified Manhattan & [2,1.25] &  &  & \\
-\hline
-	Modified Chebyshev & [1.25,2] &  &  & \\
-\hline
-	Modified Chebyshev & [2,1.25] &  &  & \\
+	Modified Chebyshev & [1.25, 2] & 3816.1 & 4185.4\\
 \hline
 \end{tabular}
+\newline
+Average Elapsed Time = 142.85
+
+\subsection{Table of Averages -- Weights = [2, 1.25]}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+	Heuristic & Weights & Nodes Expanded & Nodes Considered\\
+\hline
+	Modified Euclidean & [2, 1.25] & 7622.3 & 8247.6\\
+\hline
+	Raw Manhattan & [2, 1.25] & 1 & 6.3\\
+\hline
+	Raw Chebyshev & [2, 1.25] & 1 & 6.3\\
+\hline
+	Modified Manhattan & [2, 1.25] & 1 & 6.3\\
+\hline
+	Modified Chebyshev & [2, 1.25] & 2541.4 & 2860.4\\
+\hline
+\end{tabular}
+\newline
+Average Elapsed Time = 127.055
 
 \section{Part H}
 % Describe in your report why your implementation is efficient. Explain your results and discuss in detail your observations regarding the relative performance of the methods. Discuss the relationship with your experiments for section e. What is the relative performance of the different algorithm in terms of computation time and solution quality and why? (10 points)
-
+What makes Sequential A* efficient is the ability to sequentially test multiple heuristics to arrive at the best. By best, I mean the heuristic that can beat out the anchor heuristic implying that the winner is admissable, consistant, and more efficient than the anchor heuristic.
+\newline
+\newline
+From the table, Raw Manhattan Distance is the worst (as to be expected). Surprisingly, Modified Manhattan Distance got further than it's Raw equivalent under certain weights. Good but still not great. Unsurprisingly, Modified Euclidean Distance was more often than not expanded to full over the other heuristics; Modified Chebyshev Distance come in second, albeit by a huge margin. We thought that Modified Chebyshev Distance would have scored better than Modified Euclidean Distance because the it calculates distance in the same way that the agent can move -- eight degrees of freedoms.
+\newline
+\newline
+% Talk about Part E in context of Part H -- relationship and performance.
 
 \section{Part I}
 % Refer to Document for question (too long to put).
