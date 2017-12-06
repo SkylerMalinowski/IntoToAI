@@ -115,18 +115,18 @@ class sequential:
 					c.g = p.g + ( m*1 )
 
 		def h( c, i ):
-			if( i == 1 ):
-				c.h = 0.25 math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
-			if( i == 2 ):
-				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
-			if( i == 3 ):
-				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
-			if( i == 4 ):
-				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
-			else:
+			if( i == 1 ):  # Raw Manhattan Distance -- Inadmissable
+				c.h = math.fabs(c.where[0]-self.goal[0]) + math.fabs(c.where[1]-self.goal[1])
+			elif( i == 2 ):  # Raw Chebyshev Distance -- Inadmissable
+				c.h = max(math.fabs(c.where[0]-self.goal[0]), math.fabs(c.where[1]-self.goal[1]))
+			elif( i == 3 ):  # Custom Manhattan Distance -- Inadmissable
+				c.h = 0.25 * math.fabs(c.where[0]-self.goal[0]) + math.fabs(c.where[1]-self.goal[1])
+			elif( i == 4 ):  # Custom Chebyshev Distance -- Admissable
+				c.h = 0.25 * max(math.fabs(c.where[0]-self.goal[0]), math.fabs(c.where[1]-self.goal[1]))
+			else:  # Custom Euclidean Distance -- Admissable
 				c.h = 0.25 * math.sqrt(math.pow(c.where[0]-self.goal[0],2)+math.pow(c.where[1]-self.goal[1],2))
 
-		def tracePath( c ):
+		def tracePath( c, i ):
 			print("Shortest Movement Path Cost with weights {} =".format(self.w),c.g)
 			curr = c
 			#print("Shortest Path Trace")
@@ -136,6 +136,8 @@ class sequential:
 				curr = curr.parent
 			#print(curr.where,curr.f,curr.g,curr.h)
 			self.pathList.append(curr.where)
+			print("Nodes Expanded =",self.nodes_expanded[i])
+			print("Nodes Considered =",self.nodes_considered[i])
 
 		def successors( parent, index ):
 			s = []
@@ -205,7 +207,7 @@ class sequential:
 				self.openList[i] = heapsort(self.openList[i])
 				if( self.openList[i][0].f <= self.w[1]*self.openList[0][0].f ):
 					if( self.openList[i][0].where == self.goal ):
-						tracePath(self.openList[i][0])
+						tracePath(self.openList[i][0],i)
 						return self.pathList,i
 					else:
 						s = self.openList[i].pop(0)
@@ -214,8 +216,8 @@ class sequential:
 						self.closedList[i].append(s)
 				else:
 					if( self.openList[0][0].where == self.goal ):
-						tracePath(self.openList[0][0])
-						return self.pathList,i
+						tracePath(self.openList[0][0],0)
+						return self.pathList,0
 					else:
 						s = self.openList[0].pop(0)
 						successors(s,0)
@@ -242,12 +244,11 @@ def main():
 	fileName = sys.argv[1]
 	world,length,kCells,Centers = IO.readFile(fileName)
 	
-	w = [1.,1.]
+	w = [1.5,1.5]
 	tic = time.clock()
 	pathList,index = sequential(world,w).search()
 	toc = time.clock()
 	print( "Elapsed Time = " + str(toc - tic) + " sec" )
-	print(index)
 
 
 # Self Run  ********************************************************************
