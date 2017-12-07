@@ -80,6 +80,46 @@ Inadmissible because it does not underestimate the distance to the goal and it d
 
 \section{Part E}
 % Perform an experimental evaluation on the 50 benchmarks using the three algorithms that you have implemented for the 5 different heuristics that you have considered. For Weighted A∗ you should try at least two w values, e.g., 1.25 and 2 (feel free to experiment). Compare the various solutions in terms of average run-time, average resulting path lengths as a function of the optimum length, average number of nodes expanded and memory requirements (average over all 50 benchmarks). In your report, provide your experimental results. (15 points)
+\subsection{Table of Averages -- }
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+	Heuristic & Average Path Cost & Nodes Expanded & Nodes Considered & Elapsed Time\\
+\hline
+	Uniform Cost & 104.26106823928 & 15206.9583333333 & 15205.9583333333 & 134.628174041667\\
+\hline
+	Custom Euclidean Distance & 104.247383775749 & 12659.7916666667 & 12658.7916666667 &102.849767291667 \\
+\hline
+	Custom Euclidean Distance 1.5 & 104.247383775749 & 11037.5416666667 & 11036.5416666667 & 81.3740608750001\\
+\hline
+	Custom Euclidean Distance 2.0 & 104.541599741667 & 12231.5416666667 & 12230.5416666667 & 122.428055166667\\
+\hline
+	Raw Manhattan & 129.202789733504 & 3030.16666666667& 3029.16666666667 & 9.72364704166663\\
+\hline
+	Raw Manhattan 1.5 & 159.577792698078 & 1 & 6.3\\
+\hline
+	Raw Manhattan 2.0 &  & 1 & 6.3\\
+\hline
+	Raw Chebyshev & & 2501.4 & 3277.4\\
+\hline
+	Raw Chebyshev 1.5&  & 2501.4 & 3277.4\\
+\hline
+	Raw Chebyshev 2.0& & 2501.4 & 3277.4\\
+\hline
+	Modified Manhattan &  & 1251.4 & 1504.1\\
+\hline
+	Modified Manhattan 1.5&  & 1251.4 & 1504.1\\
+\hline
+	Modified Manhattan 2.0&  & 1251.4 & 1504.1\\
+\hline
+	Modified Chebyshev &  & 3816.1 & 4185.4\\
+\hline
+	Modified Chebyshev 1.5&  & 3816.1 & 4185.4\\
+\hline
+	Modified Chebyshev 2.0&  & 3816.1 & 4185.4\\
+
+\hline
+\end{tabular}
+
 
 
 \section{Part F}
